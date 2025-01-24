@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5" id="content-area">
+    <!-- Inventory Header -->
+    <div class="row align-items-center">
+        <div class="col-6">
+            <h2>Inventory</h2>
+        </div>
+        <div class="col-6 text-end">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    Consumables
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#">Option 1</a></li>
+                    <li><a class="dropdown-item" href="#">Option 2</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Report Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h5>Fiery Chicken Zinger Burger</h5>
+            <div class="card">
+                <div class="card-body">
+                    <div style="position: relative; height: 400px; width: 100%;">
+                        <canvas id="stockReportChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h5>Category: Burger</h5>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Meat</th>
+                            <th>Cheese</th>
+                            <th>Sauce</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Fiery Chicken Zinger Burger</td>
+                            <td>200g</td>
+                            <td>60g</td>
+                            <td>10oz</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Chicken BBQ Burger</td>
+                            <td>200g</td>
+                            <td>75oz</td>
+                            <td>15oz</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Sunrise Chicken Burger</td>
+                            <td>250g</td>
+                            <td>120g</td>
+                            <td>20oz</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('stockReportChart').getContext('2d');
+        const stockReportChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [
+                    {
+                        label: 'Stock In',
+                        data: [10, 15, 20, 25, 30, 35, 40, 25, 20, 15, 10, 5],
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    },
+                    {
+                        label: 'Stock Out',
+                        data: [5, 10, 15, 20, 25, 20, 15, 10, 5, 10, 15, 20],
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+    });
+</script>
+
+<style>
+    /* Chart container styling */
+    #stockReportChart {
+        max-width: 100%;
+        height: auto;
+    }
+</style>
+{% endblock %}

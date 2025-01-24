@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="my-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">IGP List</li>
+  </ol>
+</nav>
+
+<!-- Add and Search Row -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <!-- Search Form -->
+    <form class="d-flex" method="GET" action="{% url 'igp_list' %}">
+        <input type="text" name="igp_number" class="form-control me-2" placeholder="Search by IGP Number" value="{{ request.GET.igp_number|default_if_none:'' }}">
+        <input type="text" name="messer" class="form-control me-2" placeholder="Search by Messer Name" value="{{ request.GET.messer|default_if_none:'' }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+        
+    </form>
+    <a href="{% url 'create_igp' %}" class="btn btn-success">Create IGP</a>
+</div>
+{% if search_active %}
+    <div class="alert alert-info mt-3">
+        Showing results for your search. <a href="{% url 'igp_list' %}" class="text-decoration-none">Clear Search</a>
+    </div>
+    {% endif %}
+<hr />
+<!-- Table -->
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">IGP No:</th>
+                <th scope="col">Messer</th>
+                <th scope="col">Date</th>
+                <th scope="col">Type</th>
+                <th scope="col">Items</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for igp in igp_list %}
+                <tr>
+                    <td>{{ igp.igp_number }}</td>
+                    <td>{{ igp.messer }}</td>
+                    <td>{{ igp.date }}</td>
+                    <td>{{ igp.category }}</td>
+                    <td>
+                      <a href="{% url 'igp_item_list' igp.igp_number %}" class="btn btn-info btn-sm">
+                        <span class="text-danger m-1">{{ igp.items.count }}</span>
+                        Items
+                      </a>
+                  </td>
+                 
+                    <td>
+                        <a href="" class="text-primary" title="Edit"><i class="fa fa-edit"></i></a>
+                        <a href="" class="text-danger ms-3" title="Delete"><i class="fa fa-trash"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<div class="d-flex justify-content-center">
+  <nav aria-label="Page navigation">
+      <ul class="pagination">
+          {% if igp_list.has_previous %}
+          <li class="page-item">
+              <a class="page-link" href="?page={{ igp_list.previous_page_number }}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+              </a>
+          </li>
+          {% endif %}
+          {% for num in igp_list.paginator.page_range %}
+          <li class="page-item {% if num == igp_list.number %}active{% endif %}">
+              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+          {% endfor %}
+          {% if igp_list.has_next %}
+          <li class="page-item">
+              <a class="page-link" href="?page={{ igp_list.next_page_number }}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+              </a>
+          </li>
+          {% endif %}
+      </ul>
+  </nav>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content%}
+<form method='post' action="{%url 'update_category'  category.id %}">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input type="text" name='name' class="form-control" id="name" required="required" data-error = "Unit  Name is required" value={{category.name}}>
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <input type="text" name='description' class="form-control" id="description" placeholder="Enter Your Description" value={{category.description}}>
+    </div>
+    <div class="d-flex justify-content-start">
+        <button type="submit" class="btn btn-primary me-2">Submit</button>
+        <button type="button" class="btn btn-warning me-2" onclick="clearFields()">Clear</button>
+        <button type="button" class="btn btn-danger" onclick="cancelAction()">Cancel</button>
+    </div>
+  </form>
+  <script>
+    function clearFields() {
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.value = ''; 
+        });
+    }
+    function cancelAction() {
+        window.location.href = "{% url 'category_list' %}"; 
+    }
+</script>
+
+{% endblock %}

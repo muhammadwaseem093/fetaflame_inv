@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="my-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">IGP List</li>
+  </ol>
+</nav>
+
+<div class="d-flex justify-content-end align-items-center mb-3">
+  <!-- Search Form -->
+  
+  <!-- Add Button -->
+  <a href="{% url 'igp_list' %}" class="btn btn-success">IGP List</a>
+</div>
+<hr />
+<div class="table-responsive p-4">
+    <h5 class="mb-3">IGP Number:<strong class="text-danger  mb-3"> {{ igp_number }}</strong></h5>
+    <h6 class="mb-3">Messer: <strong class="text-danger mb-3">{{ messer_name }}</strong></h6>
+    <h6 class="mb-3">Category: <strong class="text-danger mb-3">{{ category }}</strong></h6>
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Item ID:</th>
+                <th scope="col">Item:</th>
+                <th scope="col">Description:</th>
+                <th scope="col">Unit:</th>
+                <th scope="col">Quantity:</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for igpitem in igp_items %}
+            <tr>
+                <th>{{ igpitem.id }}</th>
+                <td>{{ igpitem.item }}</td>
+                <td>{{ igpitem.description }}</td>
+                <td>{{ igpitem.unit }}</td>
+                <td>{{ igpitem.quantity }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

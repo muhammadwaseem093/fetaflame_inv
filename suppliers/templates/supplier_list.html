@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content%}
+<div class="d-flex justify-content-end">
+    <a href="{% url 'create_supplier'%}">
+    <button type="button" class="btn btn-success">Add</button></a>
+</div>
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Address</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for supplier in suppliers %}
+    <tr>
+        <th>{{supplier.id}}</th>
+        <td>{{supplier.name}}</td>
+        <td>{{supplier.phone}}</td>
+        <td>{{supplier.address}}</td>
+        <td>
+            <a href="{% url 'update_supplier' supplier.id %}" class="text-primary"><i class="fa fa-edit"></i></a>
+            <a href="{% url 'delete_supplier' supplier.id %}" class="text-danger ms-3"><i class="fa fa-trash"></i></a>
+        </td>
+      </tr>
+      {%endfor %}
+    </tbody>
+</table>
+{% endblock%}

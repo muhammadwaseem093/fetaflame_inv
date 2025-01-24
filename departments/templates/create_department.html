@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content%}
+<form method='post' action="{%url 'create_dept' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="name" class="form-label">User Name</label>
+      <input type="name" name='name' class="form-control" id="name" aria-describedby="emailHelp">
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+    </div>
+    <div class="d-flex justify-content-start">
+        <button type="submit" class="btn btn-primary me-2">Submit</button>
+        <button type="button" class="btn btn-warning me-2" onclick="clearFields()">Clear</button>
+        <button type="button" class="btn btn-danger" onclick="cancelAction()">Cancel</button>
+    </div>
+  </form>
+  <script>
+    function clearFields() {
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.value = ''; 
+        });
+    }
+    function cancelAction() {
+        window.location.href = "{% url 'view_dept' %}"; 
+    }
+</script>
+
+{% endblock %}
