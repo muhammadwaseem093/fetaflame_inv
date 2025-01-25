@@ -31,8 +31,8 @@
                     <label for="messer" class="form-label">Messer:</label>
                     <select id="messer" name="messer" class="form-select" required>
                         <option value="" disabled>Select Messer</option>
-                        {% for s in suppliers %}
-                            <option value="{{ s.id }}" {% if ogp.messer_id == s.id %}selected{% endif %}>{{ s.name }}</option>
+                        {% for v in vendors %}
+                            <option value="{{ v.id }}" {% if ogp.messer_id == v.id %}selected{% endif %}>{{ v.name }}</option>
                         {% endfor %}
                     </select>
                 </div>

@@ -1,9 +1,10 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.urls import reverse
+from django.contrib import messages
 from django.http import Http404, JsonResponse
 from django.contrib.auth.decorators import login_required
 from utils.decorators import role_required
-from suppliers.models import Supplier
+from vendor.models import Vendor
 from .models import OGP,OGPItem
 from .forms import OGPForm, OGPItemForm
 from units.models import Unit
@@ -43,13 +44,13 @@ def ogp_item_list(request, ogp_number):
         selected_ogp = OGP.objects.get(ogp_number=ogp_number)
     except OGP.DoesNotExist:
         raise Http404('OGP Not Found!')
-    ogp_items = OGPItem.objects.filter(ogp__ogp_number=selected_ogp.ogp_numer)
+    ogp_items = OGPItem.objects.filter(ogp__ogp_number=selected_ogp.ogp_number)
     
     context = {
         'ogp_number':selected_ogp.ogp_number,
         'messer_name':selected_ogp.messer.name,
         'category':selected_ogp.category,
-        'igp_items':igp_items,
+        'ogp_items':ogp_items,
     }
     
     return render(request, 'ogp_items_list.html',context)
@@ -58,7 +59,7 @@ def ogp_item_list(request, ogp_number):
 @login_required
 @role_required('staff','hr','admin')
 def create_ogp(request):
-    suppliers = Supplier.objects.all()
+    vendors = Vendor.objects.all()
     categories = Category.objects.all()
     if request.method  == "POST":
         form = OGPForm(request.POST)
@@ -68,13 +69,13 @@ def create_ogp(request):
             return redirect(reverse('create_ogp_items')+f"?ogp_number={ogp_number}")
     else:
         form = OGPForm()
-    return render(request, 'create_ogp.html', {'form':form, 'suppliers':suppliers, 'categories':categories})
+    return render(request, 'create_ogp.html', {'form':form, 'vendors':vendors, 'categories':categories})
 
 
 @login_required
 @role_required('staff','hr','admin')
 def create_ogp_items(request):
-    ogp_number = request.GET.get('ogp_number ') or request.POST.get('ogp_number')
+    ogp_number = request.GET.get('ogp_number') or request.POST.get('ogp_number')
     if not ogp_number:
         raise Http404('OGP Number is required')
     ogp = get_object_or_404(OGP, ogp_number=ogp_number)
@@ -82,7 +83,7 @@ def create_ogp_items(request):
     units = Unit.objects.all()
     
     if request.method == "POST":
-        items_form  = []
+        item_forms  = []
         num_items = len(request.POST) // 4
         
         for i in range(1, num_items + 1):
@@ -113,9 +114,9 @@ def create_ogp_items(request):
                 else:
                     for field, error in form.errors.items():
                         messages.error(request, f"{field}: {error}")
-                    items_form.append(form)
+                    item_forms.append(form)
                     return JsonResponse({'success':False, 'message':'Validation Error'})
-            return redirect('ogp_list')
+        return redirect('ogp_list')
     else:
         form = OGPItemForm()
     return render(request, 'create_ogp_items.html', {'form':form, 'items':items, 'units':units,"ogp_number":ogp_number, "range":range(1,11)})
@@ -126,7 +127,7 @@ def create_ogp_items(request):
 @role_required('staff','hr','admin')
 def update_ogp(request, pk):
     ogp = get_object_or_404(OGP, pk=pk)
-    suppliers = Supplier.objects.all()
+    vendors = Vendor.objects.all()
     categories = Category.objects.all()
     if request.method == "POST":
         form = OGPForm(request.POST, instance=ogp)
@@ -136,7 +137,7 @@ def update_ogp(request, pk):
             return redirect(reverse('update_ogp_items', kwargs={'ogp_number':ogp_number}))
     else:
         form = OGPForm(instance=ogp)
-    return render(request, 'update_ogp.html', {'form':form, 'suppliers':suppliers, 'categories':categories, 'ogp':ogp})
+    return render(request, 'update_ogp.html', {'form':form, 'vendors':vendors, 'categories':categories, 'ogp':ogp})
 
 
 @login_required
@@ -156,17 +157,17 @@ def update_ogp_items(request, ogp_number):
             
             item_id = request.POST.get(item_key)
             description = request.POST.get(description_key)
-            unit_id = request.POST.get(unit_key)
+            unit = request.POST.get(unit_key)
             quantity = request.POST.get(quantity_key)
             
             if item_id:
-                igp_items = IGPItem.objects.filter(igp=igp, item_id=item_id)
-                if igp_items.exists():
-                    for igp_item in igp_items:
-                        igp_item.description = description
-                        igp_item.unit_id = unit
-                        igp_item.quantity = quantity
-                        igp_item.save()
+                ogp_items = OGPItem.objects.filter(ogp=ogp, item_id=item_id)
+                if ogp_items.exists():
+                    for ogp_item in ogp_items:
+                        ogp_item.description = description
+                        ogp_item.unit_id = unit
+                        ogp_item.quantity = quantity
+                        ogp_item.save()
                 
         return redirect('ogp_list')
     else:

@@ -30,8 +30,8 @@
                     <label for="messer" class="form-label">Messer:</label>
                     <select id="messer" name="messer" class="form-select" required>
                         <option value="">Select Messer</option>
-                        {% for s in suppliers %}
-                            <option value="{{ s.id }}">{{ s.name }}</option>
+                        {% for v in vendors %}
+                            <option value="{{ v.id }}">{{ v.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
