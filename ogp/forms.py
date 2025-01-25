@@ -5,7 +5,7 @@ from units.models import Unit
 from items.models import Item
 from categories.models import Category
 
-class IGPForm(forms.ModelForm):
+class OGPForm(forms.ModelForm):
     class Meta:
         model = OGP
         fields = [

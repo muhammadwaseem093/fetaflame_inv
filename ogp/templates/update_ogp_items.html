@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4">
+    <h1>Update OGP Items - {{ ogp_number }}</h1>
+    <form method="POST" id="updateForm" action="{% url 'update_ogp_items' ogp_number=ogp_number %}">
+        {% csrf_token %}
+        <input type="hidden" name="ogp_number" value="{{ ogp_number }}">
+
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered rounded-top">
+                <thead class="table-primary">
+                    <tr class="text-dark text-center">
+                        <th style="font-size:20px; font-weight:bold;">Sr No</th>
+                        <th style="font-size:20px; font-weight:bold;">Item</th>
+                        <th style="font-size:20px; font-weight:bold;">Description</th>
+                        <th style="font-size:20px; font-weight:bold;">Unit</th>
+                        <th style="font-size:20px; font-weight:bold;">Quantity</th>
+                        <th style="font-size:20px; font-weight:bold;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="items_table_body">
+                    {% for item in ogp_items %}
+                    <tr id="row_{{ forloop.counter }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <select class="form-select custom-select" id="item_{{ forloop.counter }}" name="item_{{ forloop.counter }}" required onchange="updateDescription({{ forloop.counter }})">
+                                <option value="">Select Item</option>
+                                {% for available_item in items %}
+                                    <option value="{{ available_item.id }}" data-description="{{ available_item.description }}" {% if available_item.id == item.item_id %}selected{% endif %}>
+                                        {{ available_item.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="text" id="description_{{ forloop.counter }}" name="description_{{ forloop.counter }}" class="form-control custom-select" style="font-size:20px;" value="{{ item.description }}" readonly></td>
+                        <td>
+                            <select name="unit_{{ forloop.counter }}" class="form-select custom-select" required>
+                                <option value="">Select Unit</option>
+                                {% for unit in units %}
+                                    <option value="{{ unit.id }}" {% if unit.id == item.unit_id %}selected{% endif %}>
+                                        {{ unit.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="number" step="0.01" name="quantity_{{ forloop.counter }}" class="form-control" value="{{ item.quantity }}"></td>
+                        <td><button type="button" class="btn btn-danger removeRowBtn" onclick="removeRow({{ forloop.counter }})">Delete</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <button type="button" class="btn btn-info" id="addRowBtn">Add Item</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+</div>
+
+<script>
+    let currentRow = {{ igp_items|length }}; // Track the current row count
+    const maxRows = 10; // Maximum allowed rows
+
+    // Function to dynamically add rows
+    document.getElementById('addRowBtn').addEventListener('click', function () {
+        if (currentRow < maxRows) {
+            currentRow++;
+
+            const tbody = document.getElementById('items_table_body');
+            const newRow = document.createElement('tr');
+            newRow.id = 'row_' + currentRow;
+
+            newRow.innerHTML = `
+                <td>${currentRow}</td>
+                <td>
+                    <select class="form-select custom-select" id="item_${currentRow}" name="item_${currentRow}" required onchange="updateDescription(${currentRow})">
+                        <option value="">Select Item</option>
+                        {% for available_item in items %}
+                            <option value="{{ available_item.id }}" data-description="{{ available_item.description }}">{{ available_item.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td><input type="text" id="description_${currentRow}" name="description_${currentRow}" class="form-control custom-select" style="font-size:20px;" readonly></td>
+                <td>
+                    <select name="unit_${currentRow}" class="form-select custom-select" required>
+                        <option value="">Select Unit</option>
+                        {% for unit in units %}
+                            <option value="{{ unit.id }}">{{ unit.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td><input type="number" step="0.01" name="quantity_${currentRow}" class="form-control"></td>
+                <td><button type="button" class="btn btn-danger removeRowBtn" onclick="removeRow(${currentRow})">Delete</button></td>
+            `;
+            tbody.appendChild(newRow);
+        } else {
+            alert("You can only add up to 10 items.");
+        }
+    });
+
+    // Function to remove rows dynamically
+    function removeRow(rowId) {
+        const row = document.getElementById('row_' + rowId);
+        if (row) {
+            row.remove();
+            currentRow--;
+            updateRowNumbers();
+        }
+    }
+
+    // Update the Sr. No of all rows after one is removed
+    function updateRowNumbers() {
+        const rows = document.querySelectorAll('#items_table_body tr');
+        rows.forEach((row, index) => {
+            row.cells[0].textContent = index + 1;
+            row.id = 'row_' + (index + 1);
+            row.querySelector('button').setAttribute('onclick', `removeRow(${index + 1})`);
+        });
+    }
+
+    // Function to update description dynamically
+    function updateDescription(i) {
+        const itemSelect = document.getElementById('item_' + i);
+        const selectedOption = itemSelect.options[itemSelect.selectedIndex];
+        const description = selectedOption.getAttribute('data-description');
+        document.getElementById('description_' + i).value = description;
+    }
+</script>
+
+{% endblock %}

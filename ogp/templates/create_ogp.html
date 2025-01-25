@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'ogp_list' %}">OGP List</a></li>
+            <li class="breadcrumb-item active" aria-current="page">OGP Form</li>
+        </ol>
+    </nav>
+
+    <!-- Page Heading and Add Button -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4" style="margin-left:50%;">OGP Form</h1>
+       
+    </div>
+    <!-- Form -->
+    <form method="post" action="{% url 'create_ogp' %}" class="border rounded p-4 shadow-sm bg-white">
+        {% csrf_token %}
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="ogp_number" class="form-label">OGP Number:</label>
+                    <input type="text" name="ogp_number" class="form-control" id="ogp_number" placeholder="Please Enter OGP Number..." required>
+                </div>
+                <div class="mb-3">
+                    <label for="messer" class="form-label">Messer:</label>
+                    <select id="messer" name="messer" class="form-select" required>
+                        <option value="">Select Messer</option>
+                        {% for s in suppliers %}
+                            <option value="{{ s.id }}">{{ s.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date:</label>
+                    <input type="date" name="date" class="form-control" id="date">
+                </div>
+                <div class="mb-3">
+                    <label for="vehicle_number" class="form-label">Vehicle Number:</label>
+                    <input type="number" name="vehicle_number" class="form-control" id="vehicle_number" placeholder="Enter Your Vehicle Number...">
+                </div>
+                <div class="mb-3">
+                    <label for="vehicle_type" class="form-label">Vehicle Type:</label>
+                    <input type="text" name="vehicle_type" class="form-control" id="vehicle_type" placeholder="Please Enter Vehicle Type">
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="driver_name" class="form-label">Driver Name:</label>
+                    <input type="text" name="driver_name" class="form-control" id="driver_name" placeholder="Please Enter Driver Name">
+                </div>
+                <div class="mb-3">
+                    <label for="driver_contact" class="form-label">Driver Contact:</label>
+                    <input type="number" name="driver_contact" class="form-control" id="driver_contact" placeholder="Please Enter Driver Contact">
+                </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">Type:</label>
+                    <select id="category" name="category" class="form-select" required>
+                        <option value="">Select Type</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address:</label>
+                    <input type="text" name="address" class="form-control" id="address" placeholder="Please Enter Address">
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-start mt-3">
+            <button type="submit" class="btn btn-primary me-2">Submit</button>
+            <button type="button" class="btn btn-warning me-2" onclick="clearFields()">Clear</button>
+            <button type="button" class="btn btn-danger" onclick="cancelAction()">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<!-- JavaScript Functions -->
+<script>
+    function clearFields() {
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.value = ''; 
+        });
+    }
+    function cancelAction() {
+        window.location.href = "{% url 'ogp_list' %}"; 
+    }
+</script>
+{% endblock %}
