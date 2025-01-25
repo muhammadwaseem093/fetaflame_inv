@@ -12,5 +12,6 @@ urlpatterns = [
     path('units/', include('units.urls')),
     path('categories/', include('categories.urls')),
     path('igp/', include('igp.urls')),
+    path('ogp/', include('ogp.urls')),
     path('items/', include('items.urls')),
 ]

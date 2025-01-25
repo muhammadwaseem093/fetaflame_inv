@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="my-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">OGP List</li>
+  </ol>
+</nav>
+
+<!-- Add and Search Row -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <!-- Search Form -->
+    <form class="d-flex" method="GET" action="{% url 'ogp_list' %}">
+        <input type="text" name="ogp_number" class="form-control me-2" placeholder="Search by OGP Number" value="{{ request.GET.ogp_number|default_if_none:'' }}">
+        <input type="text" name="messer" class="form-control me-2" placeholder="Search by Messer Name" value="{{ request.GET.messer|default_if_none:'' }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+        
+    </form>
+    <a href="{% url 'create_ogp' %}" class="btn btn-success">Create OGP</a>
+</div>
+{% if search_active %}
+    <div class="alert alert-info mt-3">
+        Showing results for your search. <a href="{% url 'ogp_list' %}" class="text-decoration-none">Clear Search</a>
+    </div>
+    {% endif %}
+<hr />
+<!-- Table -->
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">OGP No:</th>
+                <th scope="col">Messer</th>
+                <th scope="col">Date</th>
+                <th scope="col">Type</th>
+                <th scope="col">Items</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ogp in ogp_list %}
+                <tr>
+                    <td><a href="{% url 'ogp_item_list' ogp.ogp_number %}" >
+                        {{ ogp.ogp_number }} </a></td>
+                    <td>{{ ogp.messer }}</td>
+                    <td>{{ ogp.date }}</td>
+                    <td>{{ ogp.category }}</td>
+                    <td>
+                      
+                        {{ ogp.items.count }}
+                        
+                     
+                  </td>
+                 
+                    <td>
+                        <a href="{% url 'update_ogp' ogp.id %}" class="text-primary" title="Edit"><i class="fa fa-edit"></i></a>
+                        <a href="{% url 'delete_ogp' ogp.id %}" class="text-danger ms-3" title="Delete"><i class="fa fa-trash"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<div class="d-flex justify-content-center">
+  <nav aria-label="Page navigation">
+      <ul class="pagination">
+          {% if ogp_list.has_previous %}
+          <li class="page-item">
+              <a class="page-link" href="?page={{ ogp_list.previous_page_number }}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+              </a>
+          </li>
+          {% endif %}
+          {% for num in ogp_list.paginator.page_range %}
+          <li class="page-item {% if num == ogp_list.number %}active{% endif %}">
+              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+          {% endfor %}
+          {% if ogp_list.has_next %}
+          <li class="page-item">
+              <a class="page-link" href="?page={{ ogp_list.next_page_number }}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+              </a>
+          </li>
+          {% endif %}
+      </ul>
+  </nav>
+</div>
+{% endblock %}

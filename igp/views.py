@@ -60,11 +60,11 @@ def igp_item_list(request, igp_number):
     # Render the template with the context data
     return render(request, 'items_list.html', context)
 
-@login_required
-@role_required('staff','hr','admin')
-def igp_items_list(request):
-    igpitem = IGPItem.objects.all()
-    return render(request, 'items_list.html', {"igpitem":igpitem})
+# @login_required
+# @role_required('staff','hr','admin')
+# def igp_items_list(request):
+#     igpitem = IGPItem.objects.all()
+#     return render(request, 'items_list.html', {"igpitem":igpitem})
 
 
 @login_required
