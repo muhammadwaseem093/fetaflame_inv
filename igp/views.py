@@ -143,3 +143,79 @@ def create_igp_items(request):
         'units': units,
         'igp_number': igp_number
     })
+
+
+@login_required
+@role_required('staff','hr','admin')
+def update_igp(request, pk):
+    igp = IGP.objects.get(id=pk)
+    suppliers = Supplier.objects.all()
+    categories = Category.objects.all()
+    if request.method == "POST":
+        form = IGPForm(request.POST, instance=igp)
+        if form.is_valid():
+            igp = form.save()
+            igp_number = igp.igp_number
+            return redirect(reverse("update_igp_items", kwargs={'igp_number': igp_number}))
+        else:
+            messages.error(request, "Validation Error ")
+    else:
+        form = IGPForm(instance=igp)
+    return render(request, "edit_igp.html", {"form":form, "suppliers":suppliers, "categories":categories,"igp":igp})
+
+
+
+@login_required
+@role_required('staff', 'hr', 'admin')
+def update_igp_items(request, igp_number):
+    igp = get_object_or_404(IGP, igp_number=igp_number)
+    items = Item.objects.all()
+    units = Unit.objects.all()
+
+    if request.method == 'POST':
+        num_items = len(request.POST) // 4  # Calculate number of items submitted based on the number of fields
+
+        for i in range(1, num_items + 1):
+            item_key = f'item_{i}'
+            description_key = f'description_{i}'
+            unit_key = f'unit_{i}'
+            quantity_key = f'quantity_{i}'
+
+            item_id = request.POST.get(item_key)
+            description = request.POST.get(description_key, '')
+            unit = request.POST.get(unit_key)
+            quantity = request.POST.get(quantity_key)
+
+            if item_id:
+                igp_items = IGPItem.objects.filter(igp=igp, item_id=item_id)
+                if igp_items.exists():
+                    for igp_item in igp_items:
+                        igp_item.description = description
+                        igp_item.unit_id = unit
+                        igp_item.quantity = quantity
+                        igp_item.save()
+
+        return redirect('igp_list')  # Redirect to the list page after successful update
+
+    else:
+        # Fetch IGP items to pre-populate the form
+        igp_items = IGPItem.objects.filter(igp=igp)
+        return render(request, 'update_igp_items.html', {
+            'igp_number': igp_number,
+            'items': items,
+            'units': units,
+            'igp_items': igp_items
+        })
+
+@login_required
+@role_required('hr','admin')
+def delete_igp(request,pk):
+    try:
+        igp = IGP.objects.get(id=pk)
+    except IGP.DoesNotExist:
+        raise Http404('NO IGP Found!!!')
+    if request.method == "POST":
+        igp.delete()
+        messages.success(request,'Igp with items deleted')
+        return redirect('igp_list')
+    return render(request, 'delete_igp.html', {'igp':igp})
