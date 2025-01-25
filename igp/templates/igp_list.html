@@ -43,20 +43,21 @@
         <tbody>
             {% for igp in igp_list %}
                 <tr>
-                    <td>{{ igp.igp_number }}</td>
+                    <td><a href="{% url 'igp_item_list' igp.igp_number %}" >
+                        {{ igp.igp_number }} </a></td>
                     <td>{{ igp.messer }}</td>
                     <td>{{ igp.date }}</td>
                     <td>{{ igp.category }}</td>
                     <td>
-                      <a href="{% url 'igp_item_list' igp.igp_number %}" class="btn btn-info btn-sm">
-                        <span class="text-danger m-1">{{ igp.items.count }}</span>
-                        Items
-                      </a>
+                      
+                        {{ igp.items.count }}
+                        
+                     
                   </td>
                  
                     <td>
-                        <a href="" class="text-primary" title="Edit"><i class="fa fa-edit"></i></a>
-                        <a href="" class="text-danger ms-3" title="Delete"><i class="fa fa-trash"></i></a>
+                        <a href="{% url 'update_igp' igp.id %}" class="text-primary" title="Edit"><i class="fa fa-edit"></i></a>
+                        <a href="{% url 'delete_igp' igp.id %}" class="text-danger ms-3" title="Delete"><i class="fa fa-trash"></i></a>
                     </td>
                 </tr>
             {% endfor %}

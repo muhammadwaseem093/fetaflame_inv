@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'igp_list' %}">IGP List</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Update IGP Form</li>
+        </ol>
+    </nav>
+
+    <!-- Page Heading -->
+    <div class="d-flex justify-content-center mb-3">
+        <h1 class="h4">Update IGP Form</h1>
+    </div>
+
+    <!-- Form -->
+    <form method="post" action="{% url 'update_igp' igp.id %}" class="border rounded p-4 shadow-sm bg-white">
+        {% csrf_token %}
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="igp_number" class="form-label">IGP Number:</label>
+                    <input type="text" name="igp_number" class="form-control" id="igp_number" 
+                           placeholder="Please Enter IGP Number..." value="{{ igp.igp_number }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="messer" class="form-label">Messer:</label>
+                    <select id="messer" name="messer" class="form-select" required>
+                        <option value="" disabled>Select Messer</option>
+                        {% for s in suppliers %}
+                            <option value="{{ s.id }}" {% if igp.messer_id == s.id %}selected{% endif %}>{{ s.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date:</label>
+                    <input type="date" name="date" class="form-control" id="date" value="{{ igp.date|date:'Y-m-d' }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="vehicle_number" class="form-label">Vehicle Number:</label>
+                    <input type="text" name="vehicle_number" class="form-control" id="vehicle_number" 
+                           placeholder="Enter Your Vehicle Number..." value="{{ igp.vehicle_number }}">
+                </div>
+                <div class="mb-3">
+                    <label for="vehicle_type" class="form-label">Vehicle Type:</label>
+                    <input type="text" name="vehicle_type" class="form-control" id="vehicle_type" 
+                           placeholder="Please Enter Vehicle Type" value="{{ igp.vehicle_type }}">
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="driver_name" class="form-label">Driver Name:</label>
+                    <input type="text" name="driver_name" class="form-control" id="driver_name" 
+                           placeholder="Please Enter Driver Name" value="{{ igp.driver_name }}">
+                </div>
+                <div class="mb-3">
+                    <label for="driver_contact" class="form-label">Driver Contact:</label>
+                    <input type="text" name="driver_contact" class="form-control" id="driver_contact" 
+                           placeholder="Please Enter Driver Contact" value="{{ igp.driver_contact }}">
+                </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">Type:</label>
+                    <select id="category" name="category" class="form-select" required>
+                        <option value="" disabled>Select Type</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if igp.category_id == category.id %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address:</label>
+                    <input type="text" name="address" class="form-control" id="address" placeholder="Please Enter Address" value="{{ igp.address }}">
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-start mt-3">
+            <button type="submit" class="btn btn-primary me-2">Update</button>
+           
+            <button type="button" class="btn btn-danger" onclick="cancelAction()">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<!-- JavaScript Functions -->
+<script>
+
+    function cancelAction() {
+        window.location.href = "{% url 'igp_list' %}";
+    }
+</script>
+{% endblock %}
