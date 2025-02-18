@@ -77,30 +77,34 @@ def create_ogp(request):
 def create_ogp_items(request):
     ogp_number = request.GET.get('ogp_number') or request.POST.get('ogp_number')
     if not ogp_number:
-        raise Http404('OGP Number is required')
+        return JsonResponse({'success': False, 'message': 'No OGP Number Provided'})
     ogp = get_object_or_404(OGP, ogp_number=ogp_number)
     items = Item.objects.all()
     units = Unit.objects.all()
     
     if request.method == "POST":
         item_forms  = []
-        num_items = len(request.POST) // 4
+        num_items = len(request.POST) // 5
         
         for i in range(1, num_items + 1):
             item_key = f'item_{i}'
+            item_no_key=f'item_no_{i}'
             description_key = f'description_{i}'
             unit_key = f'unit_{i}'
             quantity_key = f'quantity_{i}'
             
             
             item_id = request.POST.get(item_key)
+            item_no=request.POST.get(item_no_key)
             description = request.POST.get(description_key)
             unit_id = request.POST.get(unit_key)
             quantity = request.POST.get(quantity_key)
             
+            item = Item.objects.get(id=item_id)
             if item_id: 
                 data = {
                     'item':item_id,
+                    'item_no':item.item_no,
                     'description':description,
                     'unit':unit_id,
                     'quantity':quantity,

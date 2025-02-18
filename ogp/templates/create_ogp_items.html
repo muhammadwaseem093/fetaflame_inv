@@ -11,38 +11,17 @@
             <table class="table table-bordered rounded-top">
                 <thead class="table-primary">
                     <tr class="text-dark text-center">
-                        <th style="font-size:20px; font-weight:bold;">Sr No</th>
-                        <th style="font-size:20px; font-weight:bold;">Item</th>
-                        <th style="font-size:20px; font-weight:bold;">Description</th>
-                        <th style="font-size:20px; font-weight:bold;">Unit</th>
-                        <th style="font-size:20px; font-weight:bold;">Quantity</th>
-                        <th style="font-size:20px; font-weight:bold;">Actions</th>
+                        <th>Sr No</th>
+                        <th>Part No</th>
+                        <th>Part Name</th>
+                        <th>Description</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="items_table_body">
-                    <!-- First Row (Compulsory) -->
-                    <tr id="row_1">
-                        <td>1</td>
-                        <td>
-                            <select class="form-select custom-select" id="item_1" name="item_1" required onchange="updateDescription(1)">
-                                <option value="">Select Item</option>
-                                {% for item in items %}
-                                    <option value="{{ item.id }}" data-description="{{ item.description }}">{{ item.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                        <td><input type="text" id="description_1" name="description_1" class="form-control custom-select" style="font-size:20px;" readonly></td>
-                        <td>
-                            <select name="unit_1" class="form-select custom-select" required>
-                                <option value="">Select Unit</option>
-                                {% for unit in units %}
-                                    <option value="{{ unit.id }}">{{ unit.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                        <td><input type="number" step="0.01" name="quantity_1" class="form-control"></td>
-                        <td><button type="button" class="btn btn-danger removeRowBtn" onclick="removeRow(1)">Delete</button></td>
-                    </tr>
+                    <!-- Initially no rows -->
                 </tbody>
             </table>
         </div>
@@ -53,31 +32,32 @@
 </div>
 
 <script>
-    let currentRow = 1; // Track the current row count
-    const maxRows = 10; // Maximum allowed rows
+    let currentRow = 0; // Start row count from 0
+    const maxRows = 10;
 
-    // Function to dynamically add rows
+    // Add row on "Add Item" button click
     document.getElementById('addRowBtn').addEventListener('click', function () {
-        if (currentRow < maxRows) { // Check if the current row is less than max rows
+        if (currentRow < maxRows) {
             currentRow++;
-
             const tbody = document.getElementById('items_table_body');
             const newRow = document.createElement('tr');
             newRow.id = 'row_' + currentRow;
-
             newRow.innerHTML = `
                 <td>${currentRow}</td>
                 <td>
-                    <select class="form-select custom-select" id="item_${currentRow}" name="item_${currentRow}" required onchange="updateDescription(${currentRow})">
-                        <option value="">Select Item</option>
+                    <select name="item_${currentRow}" id="item_${currentRow}" class="form-select item-no-select" required>
+                        <option value="">Select Part No</option>
                         {% for item in items %}
-                            <option value="{{ item.id }}" data-description="{{ item.description }}">{{ item.name }}</option>
+                            <option value="{{ item.id }}" data-name="{{ item.name }}" data-description="{{ item.description }}">
+                                {{ item.item_no }}
+                            </option>
                         {% endfor %}
                     </select>
                 </td>
-                <td><input type="text" id="description_${currentRow}" name="description_${currentRow}" class="form-control custom-select" style="font-size:20px;" readonly></td>
+                <td><input type="text" id="name_${currentRow}" name="name_${currentRow}" class="form-control" readonly></td>
+                <td><input type="text" id="description_${currentRow}" name="description_${currentRow}" class="form-control" readonly></td>
                 <td>
-                    <select name="unit_${currentRow}" class="form-select custom-select" required>
+                    <select name="unit_${currentRow}" class="form-select" required>
                         <option value="">Select Unit</option>
                         {% for unit in units %}
                             <option value="{{ unit.id }}">{{ unit.name }}</option>
@@ -93,33 +73,36 @@
         }
     });
 
-    // Function to remove rows dynamically
+    // Remove row when delete button is clicked
     function removeRow(rowId) {
-        const row = document.getElementById('row_' + rowId);
-        if (row) {
-            row.remove();
-            currentRow--; // Decrease row count after removal
-            updateRowNumbers(); // Reorder the remaining rows
-        }
+        document.getElementById('row_' + rowId).remove();
+        currentRow--;
+        updateRowNumbers();
     }
 
-    // Update the Sr. No of all rows after one is removed
+    // Update row numbers after deletion
     function updateRowNumbers() {
-        const rows = document.querySelectorAll('#items_table_body tr');
-        rows.forEach((row, index) => {
-            row.cells[0].textContent = index + 1; // Update Sr No
-            row.id = 'row_' + (index + 1); // Update row ID
-            row.querySelector('button').setAttribute('onclick', `removeRow(${index + 1})`); // Update button onclick
+        document.querySelectorAll('#items_table_body tr').forEach((row, index) => {
+            row.cells[0].textContent = index + 1;
+            row.id = 'row_' + (index + 1);
+            row.querySelector('.removeRowBtn').setAttribute('onclick', `removeRow(${index + 1})`);
         });
     }
 
-    // Function to update description dynamically
-    function updateDescription(i) {
-        const itemSelect = document.getElementById('item_' + i);
-        const selectedOption = itemSelect.options[itemSelect.selectedIndex];
-        const description = selectedOption.getAttribute('data-description');
-        document.getElementById('description_' + i).value = description;
-    }
+    // Listen for changes in item selection (Part No)
+    document.getElementById('items_table_body').addEventListener('change', function (event) {
+        if (event.target.classList.contains('item-no-select')) {
+            let selectedOption = event.target.selectedOptions[0]; // Get the selected option
+            let rowId = event.target.id.split('_')[1]; // Extract the row number
+
+            // Update the name and description fields based on the selected option
+            const itemName = selectedOption.getAttribute('data-name');
+            const itemDescription = selectedOption.getAttribute('data-description');
+            
+            document.getElementById('name_' + rowId).value = itemName || '';
+            document.getElementById('description_' + rowId).value = itemDescription || '';
+        }
+    });
 </script>
 
 {% endblock %}

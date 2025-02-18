@@ -24,7 +24,7 @@ class OGP(models.Model):
 class OGPItem(models.Model):
     ogp = models.ForeignKey(OGP, on_delete=models.CASCADE, related_name="items")
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    description = models.TextField(blank=False, null=False)
+    description = models.TextField(blank=True, null=True)
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=10, decimal_places=2)
     
