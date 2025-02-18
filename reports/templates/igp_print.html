@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGP Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid black; padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Inward Gate Pass (IGP) Report</h1>
+    <p><strong>IGP Number:</strong> {{ igp.igp_number }}</p>
+    <p><strong>Supplier:</strong> {{ igp.supplier.name }}</p>
+    <p><strong>Created At:</strong> {{ igp.created_at }}</p>
+
+    <h2>IGP Items</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Description</th>
+                <th>Unit</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in igp_items %}
+            <tr>
+                <td>{{ item.item.name }}</td>
+                <td>{{ item.description|default:"N/A" }}</td>
+                <td>{{ item.unit.name }}</td>
+                <td>{{ item.quantity }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

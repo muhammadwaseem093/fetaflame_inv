@@ -1,13 +1,14 @@
 
 from django.contrib import admin
 from django.urls import path
-from .views import register_view, login_view,admin_dashboard, hr_dashboard, staff_dashboard
+from . import  views
 
 urlpatterns = [
-    path("register/", register_view, name="register_view"),
-    path('login/', login_view, name="login_view"),
-    path('admin/', admin_dashboard, name="admin_dashboard"),
-    path('hr/', hr_dashboard, name="hr_dashboard"),
-    path('staff_dashboard/', staff_dashboard, name="staff_dashboard")
+    path("register/", views.register_view, name="register_view"),
+    path('login/', views.login_view, name="login_view"),
+    path('admin/', views.admin_dashboard, name="admin_dashboard"),
+    path('hr/', views.hr_dashboard, name="hr_dashboard"),
+    path('staff_dashboard/', views.staff_dashboard, name="staff_dashboard"),
+    path('home/', views.home, name="home"),
     
 ]

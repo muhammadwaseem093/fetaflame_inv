@@ -19,7 +19,15 @@
         <button type="submit" class="btn btn-primary">Search</button>
         
     </form>
-    <a href="{% url 'create_igp' %}" class="btn btn-success">Create IGP</a>
+    <div>
+        <a href="{% url 'export_igp_csv' %}" class="btn btn-info me-2" title="Export CSV">
+            <i class="fa fa-file-csv"></i> CSV
+        </a>
+        <a href="{% url 'export_igp_pdf' %}" class="btn btn-danger me-2" title="Export PDF">
+            <i class="fa fa-file-pdf"></i> PDF
+        </a>
+        <a href="{% url 'create_igp' %}" class="btn btn-success">Create IGP</a>
+    </div>
 </div>
 {% if search_active %}
     <div class="alert alert-info mt-3">

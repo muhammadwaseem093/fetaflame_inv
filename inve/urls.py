@@ -1,6 +1,9 @@
 
 from django.contrib import admin
 from django.urls import path,include
+from django.conf import settings
+from django.conf.urls.static import static
+from accounts.views import global_error_page
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -14,4 +17,7 @@ urlpatterns = [
     path('igp/', include('igp.urls')),
     path('ogp/', include('ogp.urls')),
     path('items/', include('items.urls')),
-]
+    path('attendance/', include('attendance.urls')),
+    path('error/', global_error_page, name="global_error_page"),
+    path('reports/', include('reports.urls')),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

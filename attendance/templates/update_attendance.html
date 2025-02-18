@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="#">Home</a></li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'attendance_report' %}">Attendance List</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Update Attendance</li>
+    </ol>
+  </nav>
+
+  <!-- Page Heading -->
+  <div class="d-flex justify-content-center mb-3">
+    <h1 class="h4">Update Attendance</h1>
+  </div>
+
+  <!-- Error Messages -->
+  {% if form.errors %}
+  <div class="alert alert-danger">
+    <strong>Error(s):</strong>
+    <ul>
+      {% for field, errors in form.errors.items %}
+        {% for error in errors %}
+          <li>{{ field|title }}: {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- Attendance Form -->
+  <form
+    method="post"
+    action="{% url 'update_attendance' attendance.id %}"  <!-- Update URL with the attendance ID -->
+    class="border rounded p-4 shadow-sm bg-white"
+    id="attendanceForm"
+  >
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-12">
+        <!-- Nav Tabs -->
+        <ul class="nav nav-tabs" id="attendanceTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a
+              class="nav-link active"
+              id="attendance-info-tab"
+              data-bs-toggle="tab"
+              href="#attendance-info"
+              role="tab"
+              aria-controls="attendance-info"
+              aria-selected="true"
+            >Attendance Info</a>
+          </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content mt-3">
+          <!-- Attendance Info Tab -->
+          <div
+            class="tab-pane fade show active"
+            id="attendance-info"
+            role="tabpanel"
+            aria-labelledby="attendance-info-tab"
+          >
+            <div class="row">
+              <!-- Employee Selection (View Only) -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="employee" class="form-label">Employee:</label>
+                  <input type="text" class="form-control" id="employee" value="{{ attendance.employee.name }}" readonly />
+                </div>
+              </div>
+
+              <!-- Attendance Status Selection -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="status" class="form-label">Attendance Status:</label>
+                  <select name="status" class="form-select" id="status" required>
+                    <option value="Present" {% if attendance.status == "Present" %}selected{% endif %}>Present</option>
+                    <option value="Absent" {% if attendance.status == "Absent" %}selected{% endif %}>Absent</option>
+                    <option value="Late" {% if attendance.status == "Late" %}selected{% endif %}>Late</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-flex justify-content-start mt-3">
+          <button type="submit" class="btn btn-success">Update Attendance</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

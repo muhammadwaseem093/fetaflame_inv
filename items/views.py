@@ -5,13 +5,29 @@ from django.contrib.auth.decorators import login_required
 from utils.decorators import role_required
 from .models import Item 
 from .forms import ItemForm
+from utils.helpers import search_and_paginate
 
 
 @login_required
 @role_required('staff','hr','admin')
 def item_list(request):
-    items = Item.objects.all()
-    return render(request, 'item_list.html', {"items":items})
+    filters = {
+        "item_no":'item_no',
+    }
+    
+    item_list , search_params = search_and_paginate(
+        request,
+        model=Item,
+        filters=filters,
+        ordering='item_no',
+        per_page=10,
+    )
+    
+    return render(request, 'item_list.html',{
+        'item_list':item_list,
+        'search_params':search_params,
+        'search_active': bool(search_params),
+    })
 
 
 @login_required
@@ -38,7 +54,7 @@ def update_item(request, pk):
         form = ItemForm(request.POST, instance=item)
         if form.is_valid():
             form.save()
-            messages.succcess(request,'Item Updated Success')
+            messages.success(request,'Item Updated Successfully')
             return redirect('item_list')
         else:
             messages.error(request, 'Item Update Failed')

@@ -14,7 +14,7 @@ def create_dept(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Department Created Successfull!')
-            return redirect('view_dept')
+            return redirect('departments:view_dept')
         else:
             messages.error(request, 'Department Creation Failed')
     else:
@@ -22,7 +22,7 @@ def create_dept(request):
     return render(request, 'create_department.html', {'form':form})
 
 @login_required
-@role_required('hr', 'admin')
+@role_required('staff','hr', 'admin')
 def view_dept(request):
     department = Department.objects.all()
     return render(request, 'department_list.html', {'department':department})  
@@ -36,7 +36,7 @@ def update_dept(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Department Update Successfully!')
-            return redirect('view_dept')
+            return redirect('departments:view_dept')
         else:
             messages.error(request, 'Department Creation Failed')
             return render(request, 'edit_department.html', department_id)
@@ -56,5 +56,8 @@ def delete_dept(request, pk):
     if request.method == 'POST':
         department.delete()
         messages.success(request, "Department Deleted Successfully!")
-        return redirect('view_dept')
+        return redirect('departments:view_dept')
     return render(request, 'delete_dept.html', {'department':department})
+
+def error_page(request):
+    return render(request, 'error.html')

@@ -1,59 +1,402 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} 
+{% block content %}
+<div class="container mt-4">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="#">Home</a></li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'employees:employee_list' %}">Employee List</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Update Employee</li>
+    </ol>
+  </nav>
 
-{% block content%}
-<form method='post' action="{% url 'update_employee' employees.id %}">
+  <!-- Page Heading -->
+  <div class="d-flex justify-content-center mb-3">
+    <h1 class="h4">Update Employee Form</h1>
+  </div>
+
+  <!-- Form -->
+  {% if form.errors %}
+  <div class="alert alert-danger">
+    <strong>Error(s):</strong>
+    <ul>
+      {% for field, errors in form.errors.items %}
+        {% for error in errors %}
+          <li>{{ field|title }}: {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  <form
+    method="post"
+    action="{% url 'employees:update_employee' employees.id %}"
+    class="border rounded p-4 shadow-sm bg-white"
+    id="employeeForm"
+    enctype="multipart/form-data"
+  >
     {% csrf_token %}
-    <div class="mb-3">
-      <label for="first_name" class="form-label">First Name:</label>
-      <input type="text" name='first_name' class="form-control" id="first_name" placeholder="Please Enter First Name Please"  value="{{employees.first_name}}" required >
-    </div>
-    <div class="mb-3">
-        <label for="last_name" class="form-label">Last Name:</label>
-        <input type="text" name='last_name' class="form-control" id="last_name" placeholder="Please Enter Last Name Please" value="{{employees.last_name}}" required >
-      </div>
-    <div class="mb-3">
-      <label for="mobile" class="form-label">Mobile</label>
-      <input type="number" name='mobile' class="form-control" id="mobile" placeholder="Entter Your Mobile Number " value="{{employees.mobile}}">
-    </div>
-    <div class="mb-3">
-        <label for="cnic" class="form-label">CNIC</label>
-        <input type="number" name='cnic' class="form-control" id="cnic" placeholder="Entter Your cnic" value="{{employees.cnic}}">
-      </div>
-      <div class="mb-3">
-        <label for="address" class="form-label">Address:</label>
-        <input type="text" name='address' class="form-control" id="address" placeholder="Please Enter your address"  value="{{employees.address}}">
-      </div>
-      <div class="mb-3">
-        <label for="designation" class="form-label">Designation:</label>
-        <input type="text" name='designation' class="form-control" id="designation" placeholder="Please Enter designation" value="{{employees.designation}}" >
-      </div>
-      <div class="mb-3">
-        <label for="first_name" class="form-label">Department:</label>
-        <select id="department" name="department" class="form-select custom-select"  required>
-            <option value="">Select Department</option>
-            {% for department in departments %}
-              <option value="{{ department.id }}" 
-              {% if department.id == employees.department_id %} selected {% endif %}
-              >{{ department.name }}</option>
-            {% endfor %}
-          </select>
-      </div>
-    <div class="d-flex justify-content-start">
-        <button type="submit" class="btn btn-primary me-2">Submit</button>
-        <button type="button" class="btn btn-warning me-2" onclick="clearFields()">Clear</button>
-        <button type="button" class="btn btn-danger" onclick="cancelAction()">Cancel</button>
-    </div>
-  </form>
-  <script>
-    function clearFields() {
-        const inputs = document.querySelectorAll('input, textarea');
-        inputs.forEach(input => {
-            input.value = ''; 
-        });
-    }
-    function cancelAction() {
-        window.location.href = "{% url 'employee_list' %}"; 
-    }
-</script>
+    <div class="row">
+      <div class="col-md-12">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" id="employeeTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a
+              class="nav-link active"
+              id="personal-info-tab"
+              data-bs-toggle="tab"
+              href="#personal-info"
+              role="tab"
+              aria-controls="personal-info"
+              aria-selected="true"
+            >Personal Info</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a
+              class="nav-link"
+              id="job-info-tab"
+              data-bs-toggle="tab"
+              href="#job-info"
+              role="tab"
+              aria-controls="job-info"
+              aria-selected="false"
+            >Job Info</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a
+              class="nav-link"
+              id="address-info-tab"
+              data-bs-toggle="tab"
+              href="#address-info"
+              role="tab"
+              aria-controls="address-info"
+              aria-selected="false"
+            >Address Info</a>
+          </li>
+        </ul>
 
-{% endblock %}
+        <!-- Tab panes -->
+        <div class="tab-content mt-3">
+          <!-- Personal Info Tab -->
+          <div
+            class="tab-pane fade show active"
+            id="personal-info"
+            role="tabpanel"
+            aria-labelledby="personal-info-tab"
+          >
+            <div class="row">
+              <!-- Photo Upload -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="photo" class="form-label">Photo:</label>
+                  <input
+                    type="file"
+                    name="photo"
+                    class="form-control"
+                    id="photo"
+                    accept="image/*"
+                  />
+                  {% if employee.photo %}
+                  <img src="{{ employees.photo.url }}" alt="Employees Photo" class="img-fluid mt-2" style="max-width: 100px;">
+                  {% endif %}
+                  <small class="text-muted">Max size 2MB (JPEG/PNG only)</small>
+                </div>
+              </div>
+
+              <!-- Name -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="name" class="form-label">Full Name:</label>
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    id="name"
+                    placeholder="Enter Full Name"
+                    required
+                    value="{{ employees.name }}"
+                  />
+                  <small class="text-muted">Must be unique</small>
+                </div>
+              </div>
+
+              <!-- Father's Name -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="father_name" class="form-label">Father's Name:</label>
+                  <input
+                    type="text"
+                    name="father_name"
+                    class="form-control"
+                    id="father_name"
+                    placeholder="Enter Father's Name"
+                    value="{{ employees.father_name }}"
+                  />
+                </div>
+              </div>
+
+              <!-- CNIC -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="cnic" class="form-label">CNIC:</label>
+                  <input
+                    type="text"
+                    name="cnic"
+                    class="form-control"
+                    id="cnic"
+                    placeholder="00000-0000000-0"
+                    required
+                    maxlength="15"
+                    pattern="\d{5}-\d{7}-\d{1}"
+                    oninput="formatCNIC(this)"
+                    value="{{ employees.cnic }}"
+                  />
+                </div>
+              </div>
+
+              <!-- Date of Birth -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="dob" class="form-label">Date of Birth:</label>
+                  <input
+                    type="date"
+                    name="dob"
+                    class="form-control"
+                    id="dob"
+                    required
+                    value="{{ employees.dob|date:'Y-m-d' }}"
+                  />
+                </div>
+              </div>
+
+              <!-- Gender -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="gender" class="form-label">Gender:</label>
+                  <select
+                    name="gender"
+                    class="form-select"
+                    id="gender"
+                    required
+                  >
+                    <option value="Male" {% if employees.gender == 'Male' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if employees.gender == 'Female' %}selected{% endif %}>Female</option>
+                    <option value="Other" {% if employees.gender == 'Other' %}selected{% endif %}>Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Religious -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="religious" class="form-label">Religious:</label>
+                  <select
+                    name="religious"
+                    class="form-select"
+                    id="religious"
+                    required
+                  >
+                    <option value="Islam" {% if employees.religious == 'Islam' %}selected{% endif %}>Islam</option>
+                    <option value="Christianity" {% if employees.religious == 'Christianity' %}selected{% endif %}>Christianity</option>
+                    <option value="Hinduism" {% if employees.religious == 'Hinduism' %}selected{% endif %}>Hinduism</option>
+                    <option value="Sikhism" {% if employees.religious == 'Sikhism' %}selected{% endif %}>Sikhism</option>
+                    <option value="Judaism" {% if employees.religious == 'Judaism' %}selected{% endif %}>Judaism</option>
+                    <option value="Buddhism" {% if employees.religious == 'Buddhism' %}selected{% endif %}>Buddhism</option>
+                    <option value="Other" {% if employees.religious == 'Other' %}selected{% endif %}>Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Marital Status -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="marital_status" class="form-label">Marital Status:</label>
+                  <select
+                    name="marital_status"
+                    class="form-select"
+                    id="marital_status"
+                    required
+                  >
+                    <option value="Single" {% if employees.marital_status == 'Single' %}selected{% endif %}>Single</option>
+                    <option value="Married" {% if employees.marital_status == 'Married' %}selected{% endif %}>Married</option>
+                    <option value="Divorced" {% if employees.marital_status == 'Divorced' %}selected{% endif %}>Divorced</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Job Info Tab -->
+          <div
+            class="tab-pane fade"
+            id="job-info"
+            role="tabpanel"
+            aria-labelledby="job-info-tab"
+          >
+            <div class="row">
+              <!-- Job Title -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="current_job" class="form-label">Job Title:</label>
+                  <input
+                    type="text"
+                    name="current_job"
+                    class="form-control"
+                    id="current_job"
+                    placeholder="Enter Current Job Title"
+                    required
+                    value="{{ employees.current_job }}"
+                  />
+                </div>
+              </div>
+
+                           <!-- Designation -->
+                           <div class="col-md-6">
+                            <div class="mb-3">
+                              <label for="designation" class="form-label">Designation:</label>
+                              <input
+                                type="text"
+                                name="designation"
+                                class="form-control"
+                                id="designation"
+                                placeholder="Enter Designation"
+                                required
+                                value="{{ employees.designation }}"
+                              />
+                            </div>
+                          </div>
+            
+                          <!-- Department -->
+                          <div class="col-md-6">
+                            <div class="mb-3">
+                              <label for="department" class="form-label">Department:</label>
+                              <input
+                                type="text"
+                                name="department"
+                                class="form-control"
+                                id="department"
+                                placeholder="Enter Department"
+                                required
+                                value="{{ employees.department }}"
+                              />
+                            </div>
+                          </div>
+            
+                          <!-- Joining Date -->
+                          <div class="col-md-6">
+                            <div class="mb-3">
+                              <label for="joining_date" class="form-label">Joining Date:</label>
+                              <input
+                                type="date"
+                                name="joining_date"
+                                class="form-control"
+                                id="joining_date"
+                                required
+                                value="{{ employees.joining_date|date:'Y-m-d' }}"
+                              />
+                            </div>
+                          </div>
+            
+                          <!-- Salary -->
+                        </div>
+                      </div>
+            
+                      <!-- Address Info Tab -->
+                      <div
+                        class="tab-pane fade"
+                        id="address-info"
+                        role="tabpanel"
+                        aria-labelledby="address-info-tab"
+                      >
+                        <div class="row">
+                          <!-- Address -->
+                          <div class="col-md-12">
+                            <div class="mb-3">
+                              <label for="address" class="form-label">Address:</label>
+                              <textarea
+                                name="address"
+                                class="form-control"
+                                id="address"
+                                rows="3"
+                                required
+                              >{{ employees.address }}</textarea>
+                            </div>
+                          </div>
+            
+                          <!-- City -->
+                          <div class="col-md-6">
+                            <div class="mb-3">
+                              <label for="city" class="form-label">City:</label>
+                              <input
+                                type="text"
+                                name="city"
+                                class="form-control"
+                                id="city"
+                                placeholder="Enter City"
+                                required
+                                value="{{ employees.city }}"
+                              />
+                            </div>
+                          </div>
+            
+                          <!-- State -->
+                          <div class="col-md-6">
+                            <div class="mb-3">
+                              <label for="state" class="form-label">State:</label>
+                              <input
+                                type="text"
+                                name="state"
+                                class="form-control"
+                                id="state"
+                                placeholder="Enter State"
+                                required
+                                value="{{ employees.state }}"
+                              />
+                            </div>
+                          </div>
+            
+                          <!-- Country -->
+                          <div class="col-md-6">
+                            <div class="mb-3">
+                              <label for="country" class="form-label">Country:</label>
+                              <input
+                                type="text"
+                                name="country"
+                                class="form-control"
+                                id="country"
+                                placeholder="Enter Country"
+                                required
+                                value="{{ employees.country }}"
+                              />
+                            </div>
+                          </div>
+            
+                          <!-- Zip Code -->
+                          <div class="col-md-6">
+                            <div class="mb-3">
+                              <label for="zip_code" class="form-label">Zip Code:</label>
+                              <input
+                                type="text"
+                                name="zip_code"
+                                class="form-control"
+                                id="zip_code"
+                                placeholder="Enter Zip Code"
+                                required
+                                value="{{ employees.zip_code }}"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-center mt-4">
+                  <button type="submit" class="btn btn-primary">Update Employee</button>
+                </div>
+              </form>
+            </div>
+            {% endblock %}
+            

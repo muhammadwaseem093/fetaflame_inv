@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "igp",
     "items",
     "ogp",
+    "attendance",
+    "reports",
 ]
 
 MIDDLEWARE = [

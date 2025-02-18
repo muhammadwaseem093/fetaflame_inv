@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+    <h2>Today's Attendance Report</h2>
+    <a href="{% url 'mark_attendance' %}">
+        <button type="button" class="btn btn-success">Mark Attendance</button>
+    </a>
+</div>
+
+<table class="table table-hover mt-3">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Employee Name</th>
+            <th scope="col">Present</th>
+            <th scope="col">Absent</th>
+            <th scope="col">Late</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for employee in employees %}
+    <tr>
+        <td>{{ employee.name }}</td>
+        
+        <!-- Present status -->
+        <td>
+            {% if employee.attendance_today and not employee.attendance_today.is_late %}
+                <i class="fas fa-check-circle text-success"></i> <!-- Tick icon for present -->
+            {% else %}
+                <i class="fas fa-times-circle text-danger"></i> <!-- Cross icon for absent -->
+            {% endif %}
+        </td>
+
+        <!-- Absent status -->
+        <td>
+            {% if employee.attendance_today %}
+                {% if employee.attendance_today.is_late %}
+                    <i class="fas fa-check-circle text-success"></i> <!-- Present but late -->
+                {% else %}
+                    <i class="fas fa-times-circle text-danger"></i> <!-- Absent -->
+                {% endif %}
+            {% else %}
+                <i class="fas fa-times-circle text-danger"></i> <!-- Cross icon for absent -->
+            {% endif %}
+        </td>
+        
+        <!-- Late minutes -->
+        <td>
+            {% if employee.attendance_today and employee.attendance_today.is_late %}
+                {{ employee.attendance_today.late }} mins
+            {% else %}
+                -
+            {% endif %}
+        </td>
+
+        <!-- Action column for possible future actions like editing attendance -->
+        <td>
+            <a href="#">
+                <button class="btn btn-warning btn-sm">Edit</button>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

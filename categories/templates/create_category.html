@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content%}
-<form method='post' action="{%url 'create_category' %}">
+<form method='post' action="{%url 'categories:create_category' %}">
     {% csrf_token %}
     <div class="mb-3">
       <label for="name" class="form-label">Name</label>
-      <input type="text" name='name' class="form-control" id="name" required>
+      <input type="text" name='name' class="form-control" id="name" placeholder="Please Enter Category Name..." required>
     </div>
     <div class="mb-3">
         <label for="description" class="form-label">Description</label>
-        <input type="text" name='description' class="form-control" id="description" placeholder="Entter Your description">
+        <input type="text" name='description' class="form-control" id="description" placeholder="Enter Your description">
       </div>
     <div class="d-flex justify-content-start">
         <button type="submit" class="btn btn-primary me-2">Submit</button>
@@ -25,7 +25,7 @@
         });
     }
     function cancelAction() {
-        window.location.href = "{% url 'category_list' %}"; 
+        window.location.href = "{% url 'categories:category_list' %}"; 
     }
 </script>
 

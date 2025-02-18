@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content%}
-<form method='post' action="{%url 'update_dept'  department.id %}">
+<form method='post' action="{%url 'departments:update_dept'  department.id %}">
     {% csrf_token %}
     <div class="mb-3">
       <label for="name" class="form-label">Name</label>
@@ -25,7 +25,7 @@
         });
     }
     function cancelAction() {
-        window.location.href = "{% url 'view_dept' %}"; 
+        window.location.href = "{% url 'departments:view_dept' %}"; 
     }
 </script>
 

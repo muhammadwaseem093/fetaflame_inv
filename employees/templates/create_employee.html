@@ -1,57 +1,507 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="#">Home</a></li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'employees:employee_list' %}">Employee List</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Add Employee</li>
+    </ol>
+  </nav>
 
-{% block content%}
-<form method='post' action="{%url 'create_employee' %}">
+  <!-- Page Heading -->
+  <div class="d-flex justify-content-center mb-3">
+    <h1 class="h4">Add Employee Form</h1>
+  </div>
+
+  <!-- Form -->
+  {% if form.errors %}
+  <div class="alert alert-danger">
+    <strong>Error(s):</strong>
+    <ul>
+      {% for field, errors in form.errors.items %} {% for error in errors %}
+      <li>{{ field|title }}: {{ error }}</li>
+      {% endfor %} {% endfor %}
+    </ul>
+  </div>
+  {% endif %} {% for field in form %} {% if field.errors %}
+  <div class="invalid-feedback d-block">{{ field.errors|join:", " }}</div>
+  {% endif %} {% endfor %}
+  <form
+    method="post"
+    action="{% url 'employees:create_employee' %}"
+    class="border rounded p-4 shadow-sm bg-white"
+    id="employeeForm"
+    enctype="multipart/form-data"
+  >
     {% csrf_token %}
-    <div class="mb-3">
-      <label for="first_name" class="form-label">First Name:</label>
-      <input type="text" name='first_name' class="form-control" id="first_name" placeholder="Please Enter First Name Please" required >
-    </div>
-    <div class="mb-3">
-        <label for="last_name" class="form-label">Last Name:</label>
-        <input type="text" name='last_name' class="form-control" id="last_name" placeholder="Please Enter Last Name Please" required >
+    <div class="row">
+      <div class="col-md-12">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" id="employeeTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a
+              class="nav-link active"
+              id="personal-info-tab"
+              data-bs-toggle="tab"
+              href="#personal-info"
+              role="tab"
+              aria-controls="personal-info"
+              aria-selected="true"
+              >Personal Info</a
+            >
+          </li>
+          <li class="nav-item" role="presentation">
+            <a
+              class="nav-link"
+              id="job-info-tab"
+              data-bs-toggle="tab"
+              href="#job-info"
+              role="tab"
+              aria-controls="job-info"
+              aria-selected="false"
+              >Job Info</a
+            >
+          </li>
+          <li class="nav-item" role="presentation">
+            <a
+              class="nav-link"
+              id="address-info-tab"
+              data-bs-toggle="tab"
+              href="#address-info"
+              role="tab"
+              aria-controls="address-info"
+              aria-selected="false"
+              >Address Info</a
+            >
+          </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content mt-3">
+          <!-- Personal Info Tab -->
+          <div
+            class="tab-pane fade show active"
+            id="personal-info"
+            role="tabpanel"
+            aria-labelledby="personal-info-tab"
+          >
+            <div class="row">
+              <!-- Photo Upload -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="photo" class="form-label">Photo:</label>
+                 <input
+                    type="file"
+                    name="photo"
+                    class="form-control"
+                    id="photo"
+                    accept="image/*"
+                  />
+                  <small class="text-muted">Max size 2MB (JPEG/PNG only)</small> 
+                </div>
+              </div>
+
+              <!-- Name -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="name" class="form-label">Full Name:</label>
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    id="name"
+                    placeholder="Enter Full Name"
+                    required
+                  />
+                  <small class="text-muted">Must be unique</small>
+                </div>
+              </div>
+
+              <!-- Father's Name -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="father_name" class="form-label"
+                    >Father's Name:</label
+                  >
+                  <input
+                    type="text"
+                    name="father_name"
+                    class="form-control"
+                    id="father_name"
+                    placeholder="Enter Father's Name"
+                  />
+                </div>
+              </div>
+
+              <!-- CNIC -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="cnic" class="form-label">CNIC:</label>
+                  <input
+                    type="text"
+                    name="cnic"
+                    class="form-control"
+                    id="cnic"
+                    placeholder="00000-0000000-0"
+                    required
+                    maxlength="15"
+                    pattern="\d{5}-\d{7}-\d{1}"
+                    oninput="formatCNIC(this)"
+                  />
+                </div>
+              </div>
+
+              <!-- Date of Birth -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="dob" class="form-label">Date of Birth:</label>
+                  <input
+                    type="date"
+                    name="dob"
+                    class="form-control"
+                    id="dob"
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- Gender -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="gender" class="form-label">Gender:</label>
+                  <select
+                    name="gender"
+                    class="form-select"
+                    id="gender"
+                    required
+                  >
+                    <option value="Male" selected>Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Religious -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="religious" class="form-label">Religious:</label>
+                  <select
+                    name="religious"
+                    class="form-select"
+                    id="religious"
+                    required
+                  >
+                    <option value="Islam" selected>Islam</option>
+                    <option value="Christianity">Christianity</option>
+                    <option value="Hinduism">Hinduism</option>
+                    <option value="Sikhism">Sikhism</option>
+                    <option value="Judaism">Judaism</option>
+                    <option value="Buddhism">Buddhism</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Marital Status -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="marital_status" class="form-label"
+                    >Marital Status:</label
+                  >
+                  <select
+                    name="marital_status"
+                    class="form-select"
+                    id="marital_status"
+                    required
+                  >
+                    <option value="Single" selected>Single</option>
+                    <option value="Married">Married</option>
+                    <option value="Divorced">Divorced</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Job Info Tab -->
+          <div
+            class="tab-pane fade"
+            id="job-info"
+            role="tabpanel"
+            aria-labelledby="job-info-tab"
+          >
+            <div class="row">
+              <!-- Current Job Section -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="current_job" class="form-label">
+                    Job Title:</label
+                  >
+                  <input
+                    type="text"
+                    name="current_job"
+                    class="form-control"
+                    id="current_job"
+                    placeholder="Enter Current Job Title"
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- Previous Job Section -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="designation" class="form-label"
+                    >Designation:</label
+                  >
+                  <input
+                    type="text"
+                    name="designation"
+                    class="form-control"
+                    id="designation"
+                    placeholder="Enter Designation"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-check mb-3">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="has_previous_job"
+                  />
+                  <label class="form-check-label" for="has_previous_job">
+                    Has Previous Job Experience?
+                  </label>
+                </div>
+
+                <div id="previous_job_section" class="d-none">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="previous_job_title" class="form-label"
+                          >Previous Job Title:</label
+                        >
+                        <input
+                          type="text"
+                          name="previous_job_title"
+                          class="form-control"
+                          id="previous_job_title"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="mb-3">
+                        <label for="previous_job_start" class="form-label"
+                          >Start Date:</label
+                        >
+                        <input
+                          type="date"
+                          name="previous_job_start"
+                          class="form-control"
+                          id="previous_job_start"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="mb-3">
+                        <label for="previous_job_end" class="form-label"
+                          >End Date:</label
+                        >
+                        <input
+                          type="date"
+                          name="previous_job_end"
+                          class="form-control"
+                          id="previous_job_end"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="department" class="form-label">Department:</label>
+                  <select name="department" class="form-select">
+                    {% for dept in departments %}
+                    <option value="{{dept.id}}">{{dept.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Address Info Tab -->
+          <div
+            class="tab-pane fade"
+            id="address-info"
+            role="tabpanel"
+            aria-labelledby="address-info-tab"
+          >
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="current_address" class="form-label"
+                    >Current Address:</label
+                  >
+                  <input
+                    type="text"
+                    name="current_address"
+                    class="form-control"
+                    id="current_address"
+                    placeholder="Enter Current Address"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="permanent_address" class="form-label"
+                    >Permanent Address:</label
+                  >
+                  <input
+                    type="text"
+                    name="permanent_address"
+                    class="form-control"
+                    id="permanent_address"
+                    placeholder="Enter Permanent Address"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="contact_no" class="form-label">Contact No:</label>
+                  <input
+                    type="text"
+                    name="contact_no"
+                    class="form-control"
+                    id="contact_no"
+                    placeholder="Enter Contact No"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save and Continue/Submit Buttons -->
+        <div class="d-flex justify-content-start mt-3">
+          <button
+            type="button"
+            class="btn btn-primary me-2"
+            id="saveAndContinueBtn"
+            onclick="saveAndContinue()"
+          >
+            Next
+          </button>
+          <button type="submit" class="btn btn-success" id="submitBtn">
+            Submit
+          </button>
+        </div>
       </div>
-    <div class="mb-3">
-      <label for="mobile" class="form-label">Mobile</label>
-      <input type="number" name='mobile' class="form-control" id="mobile" placeholder="Entter Your Mobile Number ">
-    </div>
-    <div class="mb-3">
-        <label for="cnic" class="form-label">CNIC</label>
-        <input type="number" name='cnic' class="form-control" id="cnic" placeholder="Entter Your cnic">
-      </div>
-      <div class="mb-3">
-        <label for="address" class="form-label">Address:</label>
-        <input type="text" name='address' class="form-control" id="address" placeholder="Please Enter your address"  >
-      </div>
-      <div class="mb-3">
-        <label for="designation" class="form-label">Designation:</label>
-        <input type="text" name='designation' class="form-control" id="designation" placeholder="Please Enter designation">
-      </div>
-      <div class="mb-3">
-        <label for="first_name" class="form-label">Deaprtment:</label>
-        <select id="department" name="department" class="form-select custom-select"  required>
-            <option value="">Select Department</option>
-            {% for department in departments %}
-              <option value="{{ department.id }}">{{ department.name }}</option>
-            {% endfor %}
-          </select>
-      </div>
-    <div class="d-flex justify-content-start">
-        <button type="submit" class="btn btn-primary me-2">Submit</button>
-        <button type="button" class="btn btn-warning me-2" onclick="clearFields()">Clear</button>
-        <button type="button" class="btn btn-danger" onclick="cancelAction()">Cancel</button>
     </div>
   </form>
-  <script>
-    function clearFields() {
-        const inputs = document.querySelectorAll('input, textarea');
-        inputs.forEach(input => {
-            input.value = ''; 
-        });
-    }
-    function cancelAction() {
-        window.location.href = "{% url 'employee_list' %}"; 
-    }
-</script>
+</div>
 
+<script>
+  
+  function saveAndContinue() {
+    const currentTab = document.querySelector(".tab-pane.active");
+    const nextTab = currentTab.nextElementSibling;
+    const nextTabLink =
+      document.querySelector(".nav-link.active").parentElement
+        .nextElementSibling;
+
+    if (nextTab) {
+      currentTab.classList.remove("show", "active");
+      nextTab.classList.add("show", "active");
+      document.querySelector(".nav-link.active").classList.remove("active");
+      nextTabLink.querySelector(".nav-link").classList.add("active");
+
+      window.scrollTo(0,0);
+    } 
+  }
+
+  // Existing JavaScript functions
+  document.getElementById("photo").addEventListener("change", function (e) {
+    const file = e.target.files[0];
+    if (file) {
+      const allowedTypes = ["image/jpeg", "image/png"];
+      if (!allowedTypes.includes(file.type)) {
+        alert("Only JPEG/PNG files are allowed!");
+        e.target.value = "";
+        return;
+      }
+
+      if (file.size > 2 * 1024 * 1024) {
+        alert("File size must be less than 2MB!");
+        e.target.value = "";
+      }
+    }
+  });
+
+  function formatCNIC(input) {
+    let value = input.value.replace(/\D/g, "");
+    if (value.length > 13) value = value.substring(0, 13);
+
+    let formatted = value.replace(/(\d{5})(\d{7})(\d{1})/, "$1-$2-$3");
+    if (formatted === value) {
+      // No replacement happened
+      if (value.length > 5)
+        formatted = value.substring(0, 5) + "-" + value.substring(5);
+      if (value.length > 12)
+        formatted = formatted.substring(0, 13) + "-" + value.substring(12);
+    }
+    input.value = formatted;
+  }
+  // Add date validation for job durations if needed
+  // Toggle Previous Job Section
+  document
+    .getElementById("has_previous_job")
+    .addEventListener("change", function (e) {
+      const section = document.getElementById("previous_job_section");
+      const inputs = section.querySelectorAll("input:not([readonly])"); // Exclude duration
+
+      if (e.target.checked) {
+        section.classList.remove("d-none");
+        inputs.forEach((input) => (input.required = true));
+      } else {
+        section.classList.add("d-none");
+        inputs.forEach((input) => {
+          input.required = false;
+          input.value = "";
+        });
+        document.getElementById("previous_job_duration").value = "";
+      }
+    });
+
+  function validateDates() {
+    const start = document.getElementById("previous_job_start").value;
+    const end = document.getElementById("previous_job_end").value;
+    if (start && end && new Date(start) > new Date(end)) {
+      alert("End date cannot be earlier than start date");
+      return false;
+    }
+    return true;
+  }
+
+  // Update form submission handler
+  document
+    .getElementById("employeeForm")
+    .addEventListener("submit", function (e) {
+      if (!validateDates()) {
+        e.preventDefault();
+      }
+    });
+
+</script>
 {% endblock %}

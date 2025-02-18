@@ -2,16 +2,18 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.urls import reverse
 from django.db.models import Count
 from django.contrib import messages 
-from django.http import Http404, JsonResponse
+from django.http import Http404, JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from utils.decorators import role_required
 from suppliers.models import Supplier
 from .models import IGP,IGPItem
 from .forms import IGPForm, IGPItemForm
+from django.template.loader import render_to_string
 from units.models import Unit
 from categories.models import Category
 from items.models import Item 
 from utils.helpers import search_and_paginate
+
 
 
 @login_required
@@ -75,7 +77,7 @@ def create_igp(request):
     if request.method == "POST":
         form = IGPForm(request.POST)
         if form.is_valid():
-            igp = form.save()
+            igp = form.save()    
             igp_number = igp.igp_number
             return redirect(reverse("create_igp_items")+f"?igp_number={igp_number}")
         else:
@@ -84,6 +86,9 @@ def create_igp(request):
         form = IGPForm()
     return render(request, "create_igp.html", {"form":form, "suppliers":suppliers, "categories":categories})
 
+    
+    
+    
 @login_required
 @role_required('staff', 'hr', 'admin')
 def create_igp_items(request):
@@ -97,23 +102,25 @@ def create_igp_items(request):
 
     if request.method == 'POST':
         item_forms = []
-        num_items = len(request.POST) // 4  # Calculate how many rows were added based on the fields sent
-
+        num_items = len(request.POST) // 5  
         for i in range(1, num_items + 1):
             item_key = f'item_{i}'
+            item_no_key=f'item_no_{i}'
             description_key = f'description_{i}'
             unit_key = f'unit_{i}'
             quantity_key = f'quantity_{i}'
 
-            # Get values from the POST request for each row
             item_id = request.POST.get(item_key)
+            item_no=request.POST.get(item_no_key)
             description = request.POST.get(description_key, '')
             unit = request.POST.get(unit_key)
             quantity = request.POST.get(quantity_key)
-
+            
+            item = Item.objects.get(id=item_id)
             if item_id:
                 data = {
-                    'item': item_id,
+                    'item': item.id,
+                    'item_no':item.item_no,
                     'description': description,
                     'unit': unit,
                     'quantity': quantity
@@ -125,14 +132,12 @@ def create_igp_items(request):
                     igp_item.igp = igp
                     igp_item.save()
                 else:
-                    # If the form is invalid, log the errors
                     for field, error in form.errors.items():
                         print(f"Field: {field} - Errors: {error}")
                     item_forms.append(form)
                     return JsonResponse({"success": False, "message": f"Invalid data for item {i}. Errors: {form.errors}"}, status=400)
 
-        return redirect('igp_list')  # Redirect to list page after saving all items
-
+        return redirect('igp_list')  
     else:
         form = IGPItemForm()
 
@@ -219,3 +224,6 @@ def delete_igp(request,pk):
         messages.success(request,'Igp with items deleted')
         return redirect('igp_list')
     return render(request, 'delete_igp.html', {'igp':igp})
+
+def error_page(request):
+    return render(request, 'error.html')

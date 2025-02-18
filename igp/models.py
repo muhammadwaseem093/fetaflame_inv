@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from suppliers.models import Supplier 
 from items.models import Item 
@@ -6,8 +7,7 @@ from django.utils import timezone
 from categories.models import Category
 
 
-
-class IGP(models.Model):
+class IGP(models.Model): 
     igp_number = models.CharField(max_length=20, unique=True)
     messer = models.ForeignKey(Supplier,on_delete=models.CASCADE)
     date = models.DateField(default=timezone.now)
@@ -26,7 +26,7 @@ class IGP(models.Model):
 class IGPItem(models.Model):
     igp = models.ForeignKey(IGP, on_delete=models.CASCADE, related_name="items")
     item=models.ForeignKey(Item, on_delete=models.CASCADE)
-    description=models.TextField(blank=False, null=False)
+    description=models.TextField(blank=True, null=True)
     unit=models.ForeignKey(Unit, on_delete=models.CASCADE)
     quantity=models.DecimalField(max_digits=10, decimal_places=2)
     
