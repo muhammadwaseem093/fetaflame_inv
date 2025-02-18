@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <div class="card shadow-lg p-4 border-danger" style="max-width: 500px; margin: auto;">
+        <div class="card-body">
+            <!-- Restriction Icon -->
+            <div class="text-danger mb-3">
+                <i class="fas fa-exclamation-triangle fa-4x"></i>
+            </div>
+            
+            <h2 class="text-danger">Access Denied</h2>
+            <p class="text-muted">Oops! You do not have the required permissions to access this page.</p>
+
+            <!-- Dynamic Role-Based Redirect -->
+            {% if user.role == 'admin' %}
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-danger">
+                    <i class="fas fa-tachometer-alt"></i> Back to Admin Dashboard
+                </a>
+            {% elif user.role == 'hr' %}
+                <a href="{% url 'hr_dashboard' %}" class="btn btn-outline-warning">
+                    <i class="fas fa-user-tie"></i> Back to HR Dashboard
+                </a>
+            {% elif user.role == 'staff' %}
+                <a href="{% url 'staff_dashboard' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-users"></i> Back to Staff Dashboard
+                </a>
+            {% else %}
+                <a href="{% url 'home'%}" class="btn btn-outline-secondary">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- FontAwesome for Icons (Include in base.html if not already included) -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %}

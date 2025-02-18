@@ -5,13 +5,29 @@ from utils.decorators import role_required
 from django.contrib.auth.decorators import login_required
 from .models import Vendor
 from .forms import VendorForm
+from utils.helpers import search_and_paginate
 
 
 @login_required
 @role_required('staff', 'hr', 'admin')
 def vendor_list(request):
-    vendors = Vendor.objects.all()
-    return render(request, 'vendor_list.html', {"vendors":vendors})
+    filters = {
+        'name': 'name',
+    }
+    
+    vendor_list, search_params = search_and_paginate(
+        request,
+        model=Vendor,
+        filters=filters,
+        ordering='name',
+        per_page=10,
+    )
+    
+    return render(request, 'vendor_list.html', {
+        'vendor_list': vendor_list,
+        'search_params': search_params,
+        'search_active': bool(search_params),
+    })
 
 @login_required
 @role_required('staff', 'hr', 'admin')

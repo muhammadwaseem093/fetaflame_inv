@@ -13,24 +13,48 @@
     <title>Inventory Management</title>
   </head>
   <body>
-    <div class="container-fluid " >
+    <div class="container-fluid">
       {% include 'header.html'%}
       
-      <div class="row" >
-        <div class="col-md-2  bg-light" >
+      <!-- Off-canvas sidebar for mobile -->
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarCanvas">
+        <div class="offcanvas-body p-0">
           {% include 'left_sidebar.html'%}
         </div>
-        <div class="col-md-8 " id="content-area">
+      </div>
+
+      <div class="row">
+        <!-- Left Sidebar (hidden on mobile) -->
+        <div class="col-md-2 col-lg-2 d-none d-lg-block p-0 bg-light">
+          {% include 'left_sidebar.html'%}
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-md-12 col-lg-8 col-12" id="content-area">
           {% block content%}
           {% endblock%}
         </div>
-        <div class="col-md-2 bg-light">
+
+        <!-- Right Sidebar -->
+        <div class="col-md-2 col-lg-2 d-none d-lg-block bg-light">
           {% include 'right_sidebar.html'%}
         </div>
-
       </div>
-      
     </div>
+
+    <!-- Existing scripts remain the same -->
+    <script>
+      // Add event listener to close sidebar when clicking menu items on mobile
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 768) {
+            const sidebar = bootstrap.Offcanvas.getInstance(document.getElementById('sidebarCanvas'));
+            sidebar.hide();
+          }
+        });
+      });
+    </script>
+
    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="{% static 'assets/js/scripts.js'%}"></script>

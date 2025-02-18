@@ -4,6 +4,7 @@ from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from utils.decorators import role_required
 from .models import Category
+from django.urls import reverse 
 from .forms import CategoryForm
 
 
@@ -21,7 +22,7 @@ def create_category(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Category Created Successfully!")
-            return redirect("category_list")
+            return redirect(reverse("categories:category_list"))
         else:
             messages.error(request, "Category Creation Failed")
     else:
@@ -39,7 +40,7 @@ def update_category(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Category Updated Successfully!")
-            return redirect("category_list")
+            return redirect(reverse("categories:category_list"))
         else:
             messages.error(request, "Category update Failed")
     else:
@@ -57,5 +58,9 @@ def delete_category(request, pk):
     if request.method =="POST":
         category.delete()
         messages.success(request, "Category Deleted Successfully!")
-        return redirect("category_list")
+        return redirect(reverse("categories:category_list"))
     return render(request, "delete_category.html", {"category":category})
+
+
+def error_page(request):
+    return render(request, 'error.html')

@@ -1,21 +1,28 @@
-<div class="row align-items-center bg-light align-items-center" style="height:50px;">
-    <!-- Logo and Toggle Button -->
-    <div class="col-6 d-flex align-items-center">
-      <span class="fs-4 fw-bold text-success ms-md-3" id="logo">Prograssive</span>
-    </div>
-
-    <!-- Search Bar -->
-    <div class="col-6 text-end">
-      <form class="d-flex align-items-center position-relative me-3">
-        <i class="fa fa-search position-relative"
-          style="left: 378px; top:9px; transform: translateY(-50%);"></i>
-        <input 
-          class="form-control ps-5 rounded shadow-sm" 
-          type="search" 
-          placeholder="Search" 
-          aria-label="Search"
-          style="max-width: 230px; height: 35px;margin-top:1px; margin-left:350px; ">
-      </form>
-    </div>
+<div class="row align-items-center bg-light" style="height:50px;">
+  <!-- Logo and Toggle Button -->
+  <div class="col-6 d-flex align-items-center">
+    <button class="btn btn-link d-md-none" 
+            data-bs-toggle="offcanvas" 
+            data-bs-target="#sidebarCanvas"
+            aria-controls="sidebarCanvas">
+      <i class="fa fa-bars"></i>
+    </button>
+    <span class="fs-4 fw-bold text-success ms-md-3" id="logo">Prograssive</span>
   </div>
 
+  <!-- Search Bar (modified for better responsiveness) -->
+  <div class="col-6 text-end">
+    <form class="d-flex align-items-center justify-content-end me-3">
+      <div class="input-group" style="max-width: 250px;">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="fa fa-search"></i>
+        </span>
+        <input class="form-control shadow-sm" 
+               type="search" 
+               placeholder="Search" 
+               aria-label="Search"
+               style="height: 35px;">
+      </div>
+    </form>
+  </div>
+</div>

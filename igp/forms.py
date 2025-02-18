@@ -17,9 +17,8 @@ class IGPForm(forms.ModelForm):
             'driver_name',
             'driver_contact',
             'category',
-            'address'
+            'address',
             ]
-        
 class IGPItemForm(forms.ModelForm):
     class Meta:
         model = IGPItem 

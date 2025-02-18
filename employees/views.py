@@ -6,30 +6,45 @@ from django.http import Http404
 from .models import Employee
 from departments.models import Department
 from .forms import EmployeeForm
+from utils.helpers import search_and_paginate
 
 @login_required
 @role_required('staff','hr','admin')
 def employee_list(request):
-    employees = Employee.objects.all()
-    return render(request, 'employee_list.html',{'employees':employees})
+    filters = {
+        "name":'name',
+    }
+    
+    employee_list, search_params = search_and_paginate(
+        request,
+        model=Employee,
+        filters=filters,
+        ordering='id',
+        per_page=10,
+    )
+    
+    return render(request, 'employee_list.html', {
+        'employee_list':employee_list,
+        'search_params':search_params,
+        'search_active': bool(search_params),
+    })
 
 @login_required
 @role_required('hr','admin')
 def create_employee(request):
-    departments = Department.objects.all()
     if request.method == 'POST':
-        form = EmployeeForm(request.POST)
+        form = EmployeeForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Employee Created successfully!')
-            return redirect('employee_list')
-        else:
-            messages.error(request, 'employee creation failed')
+            return redirect('employees:employee_list')  # Redirect to employee list
     else:
         form = EmployeeForm()
-    return render(request, 'create_employee.html', {"form":form, "departments":departments})
-
-
+    
+    departments = Department.objects.all()
+    return render(request, 'create_employee.html', {
+        'form': form,
+        'departments': departments
+    })
 @login_required
 @role_required('hr','admin')
 def update_employee(request,pk):
@@ -46,7 +61,7 @@ def update_employee(request,pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Employee Updated  Successfully!")
-            return redirect('employee_list')
+            return redirect('employees:employee_list')
         else:
             messages.error(request, 'Employee Update Failed!')
     else:
@@ -65,5 +80,9 @@ def delete_employee(request, pk):
     if request.method == "POST":
         employee.delete()
         messages.success(request, "Employee Deleted Successfully")
-        return redirect("employee_list")
+        return redirect("employees:employee_list")
     return render(request, 'delete_employee.html', {"employee":employee})
+
+
+def error_page(request):
+    return render(request, 'error.html')

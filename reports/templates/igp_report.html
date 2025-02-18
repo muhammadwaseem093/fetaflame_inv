@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>IGP Report</h2> 
+
+<!-- Filter Form -->
+<form method="GET" id="filter-form" class="mb-3">
+    <div class="row">
+        <!-- Search Method Dropdown -->
+        <div class="col-md-3">
+            <label for="search_method" class="form-label">Search By:</label>
+            <select id="search_method" name="search_method" class="form-control">
+                <option value="" {% if not request.GET.search_method %}selected{% endif %}>Select Search Method</option>
+                <option value="messer" {% if request.GET.search_method == 'messer' %}selected{% endif %}>Supplier</option>
+                <option value="item_name" {% if request.GET.search_method == 'item_name' %}selected{% endif %}>Item Name</option>
+                <option value="category" {% if request.GET.search_method == 'category' %}selected{% endif %}>Category</option>
+            </select>
+        </div>
+
+        <!-- Dynamic Input based on search method -->
+        <div class="col-md-3" id="search-input-container">
+            {% if request.GET.search_method == 'messer' %}
+            <label for="messer" class="form-label">Supplier:</label>
+            <input type="text" id="messer" name="messer" class="form-control" placeholder="Supplier Name" value="{{ request.GET.messer }}">
+            {% elif request.GET.search_method == 'item_name' %}
+            <label for="item_name" class="form-label">Item Name:</label>
+            <input type="text" id="item_name" name="item_name" class="form-control" placeholder="Item Name" value="{{ request.GET.item_name }}">
+            {% elif request.GET.search_method == 'category' %}
+            <label for="category" class="form-label">Category:</label>
+            <input type="text" id="category" name="category" class="form-control" placeholder="Category Name" value="{{ request.GET.category }}">
+            {% endif %}
+        </div>
+
+        <!-- Date From Filter -->
+        <div class="col-md-2">
+            <label for="date_from" class="form-label">From Date:</label>
+            <input type="date" id="date_from" name="date_from" class="form-control" value="{{ request.GET.date_from }}">
+        </div>
+
+        <!-- Date To Filter -->
+        <div class="col-md-2">
+            <label for="date_to" class="form-label">To Date:</label>
+            <input type="date" id="date_to" name="date_to" class="form-control" value="{{ request.GET.date_to }}">
+        </div>
+
+        <!-- Submit Button -->
+        <div class="col-md-1 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search"></i> Filter
+            </button>
+            
+            <a href="{% url 'igp_report_filter_csv' %}?{{ request.GET.urlencode }}" class="btn btn-success">
+                <i class="bi bi-file-earmark-spreadsheet"></i> CSV
+            </a>
+            <a href="{% url 'igp_report_filter_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-danger">
+                <i class="bi bi-file-earmark-pdf"></i> PDF
+            </a>
+        </div>
+    </div>
+</form>
+
+<hr>
+
+<!-- Table displaying filtered results -->
+<table class="table table-striped table-bordered" id="igp-table">
+    <thead>
+        <tr>
+            <th>IGP Number</th>
+            <th>Supplier</th>
+            <th>Date</th>
+            <th>Item Name</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for igp in igps %}
+        <tr>
+            <td>{{ igp.igp_number }}</td>
+            <td>{{ igp.messer }}</td>
+            <td>{{ igp.date }}</td>
+            <td>{{ igp.item_id }}</td>
+            <td>{{ igp.description }}</td>
+            <td>{{ igp.quantity }}</td>
+            <td>{{ igp.unit }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" class="text-center">No records found for the given filter criteria.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pagination -->
+<div class="pagination justify-content-center">
+    {% if igps.has_previous %}
+        <a class="btn btn-secondary" href="?page=1{{ request.GET.urlencode }}">First</a>
+        <a class="btn btn-secondary" href="?page={{ igps.previous_page_number }}{{ request.GET.urlencode }}">Previous</a>
+    {% endif %}
+    
+    <span>Page {{ igps.number }} of {{ igps.paginator.num_pages }}</span>
+
+    {% if igps.has_next %}
+        <a class="btn btn-secondary" href="?page={{ igps.next_page_number }}{{ request.GET.urlencode }}">Next</a>
+        <a class="btn btn-secondary" href="?page={{ igps.paginator.num_pages }}{{ request.GET.urlencode }}">Last</a>
+    {% endif %}
+</div>
+
+<hr>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Handle dynamic input fields based on search method selection
+    const searchMethodSelect = document.getElementById('search_method');
+    const searchInputContainer = document.getElementById('search-input-container');
+
+    searchMethodSelect.addEventListener('change', function() {
+        const selectedMethod = searchMethodSelect.value;
+        if (selectedMethod) {
+            searchInputContainer.innerHTML = `
+                <label for="${selectedMethod}" class="form-label">${selectedMethod.charAt(0).toUpperCase() + selectedMethod.slice(1)}:</label>
+                <input type="text" id="${selectedMethod}" name="${selectedMethod}" class="form-control" placeholder="${selectedMethod.charAt(0).toUpperCase() + selectedMethod.slice(1)} Name">
+            `;
+        } else {
+            searchInputContainer.innerHTML = '';
+        }
+    });
+
+    // Auto-show Supplier input field without clicking Filter button
+    if (searchMethodSelect.value === 'messer') {
+        searchInputContainer.innerHTML = `
+            <label for="messer" class="form-label">Supplier:</label>
+            <input type="text" id="messer" name="messer" class="form-control" placeholder="Supplier Name" value="{{ request.GET.messer }}">
+        `;
+    }
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Adjusting font size of the table text */
+    #igp-table td, #igp-table th {
+        font-size: 0.9rem;
+    }
+
+    /* Additional button spacing and icon size */
+    .btn i {
+        margin-right: 5px;
+        font-size: 1.1rem;
+    }
+
+    /* Apply margins to the filter form */
+    #filter-form .form-control {
+        margin-bottom: 10px;
+    }
+
+    /* Add some padding to the filter form */
+    #filter-form .col-md-3, #filter-form .col-md-2 {
+        padding-right: 15px;
+    }
+</style>
+{% endblock %}

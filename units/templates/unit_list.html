@@ -1,12 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content%}
-<div class="d-flex justify-content-end">
+<nav aria-label="breadcrumb" class="my-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'home'%}">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Unit List</li>
+  </ol>
+</nav>
+<div class="d-flex justify-content-center position-relative mb-3">
+    <h3 class="text-center w-100">Unit List</h3>
     <a href="{% url 'create_unit'%}">
-    <button type="button" class="btn btn-success">Add</button></a>
+    <button type="button" class="btn btn-success position-absolute end-0">Add</button></a>
 </div>
-<table class="table table-hover">
-    <thead>
+
+<hr />
+<div class="table-responsive">
+<table class="table table-bordered table-striped table-hover">
+    <thead class="table-dark">
       <tr>
         <th scope="col">ID</th>
         <th scope="col">Name</th>
@@ -28,4 +38,5 @@
       {%endfor %}
     </tbody>
 </table>
+</div>
 {% endblock%}

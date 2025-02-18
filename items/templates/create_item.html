@@ -4,8 +4,12 @@
 <form method='post' action="{%url 'create_item' %}">
     {% csrf_token %}
     <div class="mb-3">
-      <label for="name" class="form-label">Name</label>
-      <input type="text" name='name' class="form-control" id="name" required>
+      <label for="name" class="form-label">Part Name</label>
+      <input type="text" name='name' class="form-control" id="name" placeholder="Please enter Part Name (Plug expension..)" required>
+    </div>
+    <div class="mb-3">
+      <label for="item_no" class="form-label">Part No:</label>
+      <input type="text" name='item_no' class="form-control" id="item_no" placeholder="Please enter Part No like (10072)" required>
     </div>
     <div class="mb-3">
         <label for="description" class="form-label">Description</label>

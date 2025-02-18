@@ -4,8 +4,12 @@
 <form method='post' action="{%url 'update_item'  item.id %}">
     {% csrf_token %}
     <div class="mb-3">
-      <label for="name" class="form-label">Name</label>
+      <label for="name" class="form-label">Part Name</label>
       <input type="text" name='name' class="form-control" id="name" required="required" data-error = "Item Name is required" value={{item.name}}>
+    </div>
+    <div class="mb-3">
+      <label for="item_no" class="form-label">Part No</label>
+      <input type="text" name='item_no' class="form-control" id="item_no" required="required" data-error = "Item Number is required" value={{item.item_no}}>
     </div>
     <div class="mb-3">
       <label for="description" class="form-label">Description</label>

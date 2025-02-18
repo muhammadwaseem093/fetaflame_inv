@@ -1,0 +1,36 @@
+/* Custom Off-canvas Width */
+.offcanvas-start {
+    width: 250px !important;
+  }
+  
+  /* Sidebar transition animation */
+  .offcanvas {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Mobile optimization */
+  @media (max-width: 768px) {
+    .table-stack {
+      display: block;
+      width: 100%;
+    }
+    .table-stack thead {
+      display: none;
+    }
+    .table-stack tr {
+      display: block;
+      margin-bottom: 1rem;
+      border: 1px solid #dee2e6;
+    }
+    .table-stack td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: none;
+    }
+    .table-stack td::before {
+      content: attr(data-label);
+      font-weight: bold;
+      margin-right: 1rem;
+    }
+  }
