@@ -1,107 +1,130 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-4">
-  <!-- Breadcrumb -->
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="#">Home</a></li>
-      <li class="breadcrumb-item">
-        <a href="{% url 'attendance_report' %}">Attendance List</a>
-      </li>
-      <li class="breadcrumb-item active" aria-current="page">Mark Attendance</li>
-    </ol>
-  </nav>
-
-  <!-- Page Heading -->
-  <div class="d-flex justify-content-center mb-3">
-    <h1 class="h4">Mark Attendance</h1>
+<div class="attendance-wrapper">
+  <div class="attendance-header">
+    <h2>Employee Attendance System</h2>
   </div>
-
-  <!-- Error Messages -->
-  {% if form.errors %}
-  <div class="alert alert-danger">
-    <strong>Error(s):</strong>
-    <ul>
-      {% for field, errors in form.errors.items %}
-        {% for error in errors %}
-          <li>{{ field|title }}: {{ error }}</li>
-        {% endfor %}
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
-
-  <!-- Attendance Form -->
-  <form
-    method="post"
-    action="{% url 'mark_attendance' %}"
-    class="border rounded p-4 shadow-sm bg-white"
-    id="attendanceForm"
-  >
-    {% csrf_token %}
-    <div class="row">
-      <div class="col-md-12">
-        <!-- Nav Tabs -->
-        <ul class="nav nav-tabs" id="attendanceTab" role="tablist">
-          <li class="nav-item" role="presentation">
-            <a
-              class="nav-link active"
-              id="attendance-info-tab"
-              data-bs-toggle="tab"
-              href="#attendance-info"
-              role="tab"
-              aria-controls="attendance-info"
-              aria-selected="true"
-            >Attendance Info</a>
-          </li>
-        </ul>
-
-        <!-- Tab Content -->
-        <div class="tab-content mt-3">
-          <!-- Attendance Info Tab -->
-          <div
-            class="tab-pane fade show active"
-            id="attendance-info"
-            role="tabpanel"
-            aria-labelledby="attendance-info-tab"
-          >
-            <div class="row">
-              <!-- Employee Selection -->
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="employee" class="form-label">Employee:</label>
-                  <select name="employee" class="form-select" id="employee" required>
-                    <option value="" disabled selected>Select Employee</option>
-                    {% for emp in employees %}
-                      <option value="{{ emp.id }}" {% if emp.id == form.employee.value %}selected{% endif %}>{{ emp.name }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-
-              <!-- Attendance Status Selection -->
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="status" class="form-label">Attendance Status:</label>
-                  <select name="status" class="form-select" id="status" required>
-                    <option value="" disabled selected>Select Status</option>
-                    <option value="Present" {% if form.status.value == "Present" %}selected{% endif %}>Present</option>
-                    <option value="Absent" {% if form.status.value == "Absent" %}selected{% endif %}>Absent</option>
-                    <option value="Late" {% if form.status.value == "Late" %}selected{% endif %}>Late</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="d-flex justify-content-start mt-3">
-          <button type="submit" class="btn btn-success">Mark Attendance</button>
-        </div>
-      </div>
+  <div class="attendance-content">
+    <!-- Camera Feed Section -->
+    <div class="camera-feed">
+      <img src="{% url 'attendance:video_feed' %}" width="640" height="480" alt="Camera Feed">
     </div>
-  </form>
+    
+    <!-- Attendance Status Section -->
+    <div class="attendance-status">
+      <form id="attendanceForm" action="{% url 'attendance:save_attendance' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" id="employee_name" name="employee_name" placeholder="Employee Name" readonly>
+        <select id="attendance_type" name="attendance_type">
+            <option value="">Select Type</option>
+            <option value="Check In">Check In</option>
+            <option value="Check Out">Check Out</option>
+            <option value="Break Out">Break Out</option>
+            <option value="Break In">Break In</option>
+            <option value="For Market">For Market</option>
+            <option value="From Market">From Market</option>
+            <option value="For Vendor">For Vendor</option>
+            <option value="From Vendor">From Vendor</option>
+        </select>
+        <button type="submit">Mark Attendance</button>
+    </form>
+    </div>
+  </div>
 </div>
+
+<script>
+  function checkFaceDetection() {
+    fetch("{% url 'attendance:get_employee_data' %}")
+        .then(response => response.json())
+        .then(data => {
+            if (data.fresh && data.names.length > 0) {
+                const detectedName = data.names[0];
+                const nameField = document.getElementById('employee_name');
+                
+                if (nameField.value !== detectedName) {
+                    nameField.value = detectedName;
+                    fetchEmployeeData(detectedName);
+                }
+            }
+        })
+        .catch(error => console.error("Error fetching detection data:", error))
+        .finally(() => setTimeout(checkFaceDetection, 500));
+}
+
+// Fix CSRF in AJAX Calls
+function getCSRFToken() {
+    return document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+}
+
+function fetchEmployeeData(name) {
+    fetch(`{% url 'attendance:get_employee_data' %}?employee_name=${encodeURIComponent(name)}`, {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: {
+            'X-CSRFToken': getCSRFToken(),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(employee => console.log('Employee details:', employee))
+    .catch(error => console.error('Error:', error));
+}
+
+document.addEventListener('DOMContentLoaded', checkFaceDetection);
+
+</script>
+
+
+<style>
+.attendance-wrapper {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 20px;
+}
+
+.attendance-content {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.camera-feed {
+  flex: 2;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.attendance-status {
+  flex: 1;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#recognition-result {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 4px;
+}
+
+.attendance-instructions {
+  padding: 1rem;
+  background: #e9ecef;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .attendance-content {
+    flex-direction: column;
+  }
+  
+  .camera-feed {
+    width: 100%;
+  }
+}
+</style>
 {% endblock %}

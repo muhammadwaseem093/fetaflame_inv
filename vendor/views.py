@@ -61,7 +61,7 @@ def update_vendor(request, pk):
     return render(request, 'edit_vendor.html', {"form":form, "vendor":vendor})
 
 @login_required
-@role_required('hr','admin')
+@role_required('admin')
 def delete_vendor(request, pk):
     try:
         vendor = Vendor.objects.get(id=pk)
@@ -73,3 +73,6 @@ def delete_vendor(request, pk):
         messages.success(request, "Vendor Deleted Successfully!")
         return redirect("vendor_list")
     return render(request, 'delete_vendor.html', {"vendor":vendor})
+
+def error_page(request):
+    return render(request, 'error.html')

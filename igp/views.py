@@ -77,7 +77,9 @@ def create_igp(request):
     if request.method == "POST":
         form = IGPForm(request.POST)
         if form.is_valid():
-            igp = form.save()    
+            igp = form.save(commit=False)
+            igp.created_by=request.user
+            igp.save()    
             igp_number = igp.igp_number
             return redirect(reverse("create_igp_items")+f"?igp_number={igp_number}")
         else:
@@ -205,29 +207,7 @@ def update_igp_items(request, igp_number):
                 )
                 
                 igp_item.save()
-            
-            # item = Item.objects.get(id=item_id)
-            # if item_id:
-            #     data = {
-            #         'item': item.id,
-            #         'item_no':item.item_no,
-            #         'description': description,
-            #         'unit': unit,
-            #         'quantity': quantity
-            #     }
-
-            #     form = IGPItemForm(data)
-            #     if form.is_valid():
-            #         igp_item = form.save(commit=False)
-            #         igp_item.igp = igp
-            #         igp_item.save()
-            #     else:
-            #         for field, error in form.errors.items():
-            #             print(f"Field: {field} - Errors: {error}")
-            #         item_forms.append(form)
-            #         return JsonResponse({"success": False, "message": f"Invalid data for item {i}. Errors: {form.errors}"}, status=400)
-
-        return redirect('igp_list')  # Redirect to the list page after successful update
+        return redirect('igp_list')  
 
     else:
         # Fetch IGP items to pre-populate the form
@@ -240,7 +220,7 @@ def update_igp_items(request, igp_number):
         })
 
 @login_required
-@role_required('hr','admin')
+@role_required('admin')
 def delete_igp(request,pk):
     try:
         igp = IGP.objects.get(id=pk)

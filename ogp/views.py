@@ -64,7 +64,9 @@ def create_ogp(request):
     if request.method  == "POST":
         form = OGPForm(request.POST)
         if form.is_valid():
-            ogp = form.save()
+            ogp = form.save(commit=False)
+            ogp.created_by=request.user
+            ogp.save()
             ogp_number = ogp.ogp_number
             return redirect(reverse('create_ogp_items')+f"?ogp_number={ogp_number}")
     else:
@@ -128,7 +130,7 @@ def create_ogp_items(request):
 
 
 @login_required
-@role_required('staff','hr','admin')
+@role_required('admin')
 def update_ogp(request, pk):
     ogp = get_object_or_404(OGP, pk=pk)
     vendors = Vendor.objects.all()
@@ -145,7 +147,7 @@ def update_ogp(request, pk):
 
 
 @login_required
-@role_required('staff','hr','admin')
+@role_required('admin')
 def update_ogp_items(request, ogp_number):
     ogp = get_object_or_404(OGP, ogp_number=ogp_number)
     items = Item.objects.all()
@@ -186,7 +188,7 @@ def update_ogp_items(request, ogp_number):
             
             
 @login_required
-@role_required('staff','hr','admin')
+@role_required('admin')
 def delete_ogp(request, pk):
     try:
         ogp = OGP.objects.get(pk=pk)
@@ -197,3 +199,6 @@ def delete_ogp(request, pk):
         messages.success(request, 'OGP Deleted Successfully')
         return redirect('ogp_list')
     return render(request, 'delete_ogp.html', {'ogp':ogp})
+
+def error_page(request):
+    return render(request, 'error.html')

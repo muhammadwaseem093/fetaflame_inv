@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">{{ employee.name }} - Attendance Details of Month <strong class="info">March</strong></h2>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Date</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+                <th>Market Time</th>
+                <th>Vendor Time</th>
+                <th>Break Time</th>
+                <th>Late (Minutes)</th>
+                <th>Working Hours</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in monthly_attendance %}
+            <tr>
+                <td>{{ record.date }}</td>
+                <td>{{ record.check_in }}</td>
+                <td>{{ record.check_out }}</td>
+                <td>{{ record.market_hours }}</td>
+                <td>{{ record.vendor_hours }}</td>
+                <td>{{ record.break_hours }}</td>
+                <td>
+                    {% if record.late != "🟢 No" %}
+                        <span class="text-danger">{{ record.late }}</span>
+                    {% else %}
+                        <span class="text-success">{{ record.late }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ record.working_hours }}</td>
+                <td>
+                    {% if record.status == "✅ Present" %}
+                        <span class="badge badge-success">{{ record.status }}</span>
+                    {% else %}
+                        <span class="badge badge-danger">{{ record.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

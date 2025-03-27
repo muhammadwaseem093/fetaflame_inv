@@ -38,7 +38,7 @@ def create_item(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Item Created Successfully!')
-            return redirect('item_list')
+            return redirect('items:item_list')
         else:
             messages.error(request, 'Item Creation Failed')
     else:
@@ -55,7 +55,7 @@ def update_item(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request,'Item Updated Successfully')
-            return redirect('item_list')
+            return redirect('items:item_list')
         else:
             messages.error(request, 'Item Update Failed')
     else:
@@ -64,7 +64,7 @@ def update_item(request, pk):
 
 
 @login_required
-@role_required('hr','hr','admin')
+@role_required('hr','admin')
 def delete_item(request, pk):
     try:
         item = Item.objects.get(id=pk)
@@ -73,5 +73,11 @@ def delete_item(request, pk):
     if request.method == "POST":
         item.delete()
         messages.success(request, 'Item Deleted Successfully!')
-        return redirect('item_list')
+        return redirect('items:item_list')
     return render(request, 'delete_item.html', {"item":item})
+
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)
+
+def error_page(request):
+    return render(request, 'error.html')

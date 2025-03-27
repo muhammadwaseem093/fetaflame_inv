@@ -1,6 +1,7 @@
 from django.urls import path 
 from . import views 
 
+
 urlpatterns = [
     path('create/', views.create_igp, name="create_igp"),
      path('create-item/', views.create_igp_items, name="create_igp_items"),

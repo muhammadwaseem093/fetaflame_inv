@@ -26,12 +26,13 @@ SECRET_KEY = "django-insecure-@7e22p&6u(ws*xw3%z*6=8@i**2p_m0qed*k$!$4sus^tb*_1g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -63,6 +64,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "inve.urls"
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S" 
+
+
+
+
 
 TEMPLATES = [
     {

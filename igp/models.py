@@ -5,6 +5,9 @@ from items.models import Item
 from units.models import Unit
 from django.utils import timezone
 from categories.models import Category
+from accounts.models import User
+from django.utils.timezone import now
+
 
 
 class IGP(models.Model): 
@@ -17,6 +20,13 @@ class IGP(models.Model):
     driver_contact = models.CharField(max_length=15, blank=True, null=True)
     category=models.ForeignKey(Category, on_delete=models.CASCADE)
     address=models.CharField(max_length=100, null=False, blank=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True )
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        self.updated_at=now()
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"IGP {self.igp_number} - {self.messer}"

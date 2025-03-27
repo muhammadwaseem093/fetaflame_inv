@@ -6,7 +6,10 @@ from .forms import UserCreationForm
 from utils.decorators import role_required
 from igp.models import IGP
 from ogp.models import OGP
+from employees.models import Employee
 import datetime
+from django.contrib.auth import logout
+from django.views.decorators.http import require_POST
 
 
 def register_view(request):
@@ -50,18 +53,23 @@ def admin_dashboard(request):
 @login_required
 @role_required('hr')
 def hr_dashboard(request):
-    return render(request, 'dashboard/hr_dashboard.html')
+    today = datetime.date.today()
+    # igp_count_today = IGP.objects.filter(created_at__date=today).count()
+    emp_count_total = Employee.objects.all().count()
+    # ogp_count_today = OGP.objects.filter(created_at__date=today).count()
+    # ogp_count_total = OGP.objects.all().count()
+    return render(request, 'dashboard/hr_dashboard.html', {'emp_count_total':emp_count_total})
 
 @login_required
 @role_required('staff')
 def staff_dashboard(request):
     
     today = datetime.date.today()
-    # igp_count_today = IGP.objects.filter(created_at__date=today).count()
+    igp_count_today = IGP.objects.filter(created_at__date=today).count()
     igp_count_total = IGP.objects.all().count()
-    # ogp_count_today = OGP.objects.filter(create_at__date=today).count()
+    ogp_count_today = OGP.objects.filter(created_at__date=today).count()
     ogp_count_total = OGP.objects.all().count()
-    return render(request, 'dashboard/staff_dashboard.html', { 'igp_count_total':igp_count_total, 'ogp_count_total':ogp_count_total})
+    return render(request, 'dashboard/staff_dashboard.html', { 'igp_count_total':igp_count_total, 'ogp_count_total':ogp_count_total, 'igp_count_today':igp_count_today, 'ogp_count_today':ogp_count_today})
 
 
 def home(request):
@@ -76,7 +84,10 @@ def home(request):
             return redirect('register_view')
     return render(request, 'base.html')
 
-
+@require_POST
+def logout_view(request):
+    logout(request)
+    return redirect('login_view')
 
 def global_error_page(request):
     return render(request, 'global/error.html')
