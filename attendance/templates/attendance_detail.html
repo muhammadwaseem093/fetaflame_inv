@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Attendance Detail</h2>
+  <p>Employee: {{ attendance.employee.name }}</p>
+  <p>Date: {{ attendance.attendance_date }}</p>
+  <p>Check-in: {{ attendance.check_in }}</p>
+  <p>Check-out: {{ attendance.check_out|default:'-' }}</p>
+  <p>Status: {{ attendance.status }}</p>
+  <p>Break Start: {{ attendance.break_start|default:'-' }}</p>
+  <p>Break End: {{ attendance.break_end|default:'-' }}</p>
+  <a href="{% url 'attendance:attendance_list' %}">Back to List</a>
+{% endblock %}

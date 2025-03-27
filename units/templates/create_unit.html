@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content%}
-<form method='post' action="{%url 'create_unit' %}">
+<form method='post' action="{%url 'units:create_unit' %}">
     {% csrf_token %}
     <div class="mb-3">
       <label for="name" class="form-label">Name</label>
@@ -25,7 +25,7 @@
         });
     }
     function cancelAction() {
-        window.location.href = "{% url 'unit_list' %}"; 
+        window.location.href = "{% url 'units:unit_list' %}"; 
     }
 </script>
 

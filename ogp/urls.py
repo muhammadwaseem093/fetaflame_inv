@@ -9,5 +9,7 @@ urlpatterns = [
     path('udpate/<int:pk>/', views.update_ogp, name="update_ogp"),
     path('update-ogp-items/<int:ogp_number>/', views.update_ogp_items, name='update_ogp_items'),
     path('delete/<int:pk>/',views.delete_ogp, name="delete_ogp"),
+    path('error/', views.error_page, name='error_page'),
+    
     
 ]

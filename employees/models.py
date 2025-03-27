@@ -2,9 +2,11 @@ from django.db import models
 from departments.models import Department
 from datetime import date
 
+
+
 class Employee(models.Model):
-    photo = models.ImageField(upload_to='employee_photos/', blank=True, null=True)
-    face_encoding = models.BinaryField(blank=True, null=True)
+    photo = models.ImageField(upload_to='', blank=True, null=True)
+    face_encoding = models.JSONField(blank=True, null=True)
     name = models.CharField(max_length=255,null=True, blank=True)
     father_name = models.CharField(max_length=255, blank=True, null=True)
     cnic = models.CharField(max_length=15, blank=True, null=True)
@@ -22,23 +24,6 @@ class Employee(models.Model):
     previous_job_start = models.DateField(blank=True, null=True)
     previous_job_end = models.DateField(blank=True, null=True)
     
-    
-    
-    def save_face_encoding(self):
-        """Extract and save face encoding from the uploaded image. """
-        
-        if self.photo:
-            image_path = self.photo.path
-            image = face_recognition.load_image_file(image_path)
-            encoding = face_recognition.face_encoding(image)
-            
-            if encoding:
-                self.face_encoding = np.array(encodings[0]).tobytes()
-            else:
-                self.face_encoding = None
-                
-            super().save()
-            
 
     def calculate_previous_job_duration(self):
         """
@@ -52,5 +37,25 @@ class Employee(models.Model):
             return f"{years}y {months}m {days}d"
         return "N/A"
 
+    def clean_cnic(self):
+        cnic = self.cnic 
+        if cnic and not self.is_valid_cnic(cnic):
+            raise ValidationError("Invalid CNIC Format.")
+        return cnic 
+    
+    def clean_contact_no(self):
+        contact_no = self.contact_no 
+        if contact_no  and not self.is_valid_contact_no(contact_no):
+            raise ValidationError("Invalid Contact Number Format")
+        return contact_no 
+    
+    def is_valid_cnic(self, cnic):
+        cnic = "".join(filter(str.isdigit, cnic))
+        return len(cnic) == 13
+    
+    def is_valid_contact_no(self, contact_no):
+        contact_no = "".join(filter(str.isdigit, contact_no))
+        return len(contact_no) == 11
+    
     def __str__(self):
         return self.name
