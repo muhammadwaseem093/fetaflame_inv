@@ -4,6 +4,8 @@ from items.models import Item
 from units.models import Unit 
 from categories.models import Category
 from django.utils import timezone 
+from accounts.models import User
+from django.utils.timezone import now
 
 
 class OGP(models.Model):
@@ -16,6 +18,13 @@ class OGP(models.Model):
     driver_contact = models.CharField(max_length=15, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     address = models.CharField(max_length=100, null=False, blank=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True )
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        self.updated_at=now()
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"OGP {self.ogp_number} - {self.messer}"
@@ -24,7 +33,7 @@ class OGP(models.Model):
 class OGPItem(models.Model):
     ogp = models.ForeignKey(OGP, on_delete=models.CASCADE, related_name="items")
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    description = models.TextField(blank=False, null=False)
+    description = models.TextField(blank=True, null=True)
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=10, decimal_places=2)
     

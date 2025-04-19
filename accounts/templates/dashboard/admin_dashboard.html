@@ -1,122 +1,153 @@
 {% extends 'base.html' %}
-{% block content %}
+{% load static %}
 
-<div class="container mt-5" id="content-area">
-    <!-- Inventory Header -->
-    <div class="row align-items-center">
-        <div class="col-6">
-            <h2>Inventory</h2>
-        </div>
-        <div class="col-6 text-end">
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    Consumables
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="#">Option 1</a></li>
-                    <li><a class="dropdown-item" href="#">Option 2</a></li>
-                </ul>
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Top Summary Cards -->
+    <div class="row g-4">
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="card text-white bg-primary shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-users fa-2x me-3"></i>
+                    <div>
+                        <h6>Total </h6>
+                        <h4>150</h4>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-
-    <!-- Stock Report Section -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <h5>Fiery Chicken Zinger Burger</h5>
-            <div class="card">
-                <div class="card-body">
-                    <div style="position: relative; height: 400px; width: 100%;">
-                        <canvas id="stockReportChart"></canvas>
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="card text-white bg-success shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-user-check fa-2x me-3"></i>
+                    <div>
+                        <h6>Present</h6>
+                        <h4>120</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="card text-white bg-danger shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-user-times fa-2x me-3"></i>
+                    <div>
+                        <h6>Absent </h6>
+                        <h4>20</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="card text-white bg-warning shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-user-clock fa-2x me-3"></i>
+                    <div>
+                        <h6>Late</h6>
+                        <h4>10</h4>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Category Section -->
+    <!-- Inventory Summary Cards -->
+    <div class="row g-4 mt-4">
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="card shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-boxes fa-2x me-3 text-primary"></i>
+                    <div>
+                        <h6>Total Employees</h6>
+                        <h4></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="card shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-truck-loading fa-2x me-3 text-success"></i>
+                    <div>
+                        <h6>Today's OGP</h6>
+                        <h4></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="card shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-box-open fa-2x me-3 text-warning"></i>
+                    <div>
+                        <h6>Pending IGP</h6>
+                        <h4></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="card shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-dolly-flatbed fa-2x me-3 text-danger"></i>
+                    <div>
+                        <h6>Pending OGP</h6>
+                        <h4></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Table -->
     <div class="row mt-4">
         <div class="col-12">
-            <h5>Category: Burger</h5>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Meat</th>
-                            <th>Cheese</th>
-                            <th>Sauce</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Fiery Chicken Zinger Burger</td>
-                            <td>200g</td>
-                            <td>60g</td>
-                            <td>10oz</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Chicken BBQ Burger</td>
-                            <td>200g</td>
-                            <td>75oz</td>
-                            <td>15oz</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Sunrise Chicken Burger</td>
-                            <td>250g</td>
-                            <td>120g</td>
-                            <td>20oz</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Today's Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Activity Type</th>
+                                    <th>Description</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>New IGP</td>
+                                    <td>Received 100 items</td>
+                                    <td>10:30 AM</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>New OGP</td>
+                                    <td>Shipped 80 items</td>
+                                    <td>11:00 AM</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>New Supplier</td>
+                                    <td>ABC Ltd. added</td>
+                                    <td>12:15 PM</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>New Vendor</td>
+                                    <td>XYZ Pvt. Ltd. added</td>
+                                    <td>1:00 PM</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Chart.js Script -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('stockReportChart').getContext('2d');
-        const stockReportChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [
-                    {
-                        label: 'Stock In',
-                        data: [10, 15, 20, 25, 30, 35, 40, 25, 20, 15, 10, 5],
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                    },
-                    {
-                        label: 'Stock Out',
-                        data: [5, 10, 15, 20, 25, 20, 15, 10, 5, 10, 15, 20],
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                    },
-                },
-            },
-        });
-    });
-</script>
-
-<style>
-    /* Chart container styling */
-    #stockReportChart {
-        max-width: 100%;
-        height: auto;
-    }
-</style>
 {% endblock %}

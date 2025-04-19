@@ -11,7 +11,7 @@
 <!-- Add and Search Row -->
 <div class="d-flex justify-content-between align-items-center mb-3">
     <!-- Search Form -->
-    <form class="d-flex" method="GET" action="{% url 'vendor_list' %}">
+    <form class="d-flex" method="GET" action="{% url 'vendor:vendor_list' %}">
         <input type="text" name="name" class="form-control me-2" placeholder="Search by Vendor Name" value="{{ request.GET.name|default_if_none:'' }}">
         <button type="submit" class="btn btn-primary">Search</button>
         
@@ -23,12 +23,12 @@
         <a href="" class="btn btn-danger me-2" title="Export PDF">
             <i class="fa fa-file-pdf"></i> PDF
         </a>
-        <a href="{% url 'create_vendor' %}" class="btn btn-success">Add</a>
+        <a href="{% url 'vendor:create_vendor' %}" class="btn btn-success">Add</a>
     </div>
 </div>
 {% if search_active %}
     <div class="alert alert-info mt-3">
-        Showing results for your search. <a href="{% url 'vendor_list' %}" class="text-decoration-none">Clear Search</a>
+        Showing results for your search. <a href="{% url 'vendor:vendor_list' %}" class="text-decoration-none">Clear Search</a>
     </div>
     {% endif %}
 <hr />
@@ -52,8 +52,8 @@
         <td>{{vendor.phone}}</td>
         <td>{{vendor.address}}</td>
         <td>
-            <a href="{% url 'update_vendor' vendor.id %}" class="text-primary"><i class="fa fa-edit"></i></a>
-            <a href="{% url 'delete_vendor' vendor.id %}" class="text-danger ms-3"><i class="fa fa-trash"></i></a>
+            <a href="{% url 'vendor:update_vendor' vendor.id %}" class="text-primary"><i class="fa fa-edit"></i></a>
+            <a href="{% url 'vendor:delete_vendor' vendor.id %}" class="text-danger ms-3"><i class="fa fa-trash"></i></a>
         </td>
       </tr>
       {%endfor %}

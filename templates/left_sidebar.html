@@ -21,7 +21,7 @@
             </a>
           </li>
           <li>
-            <a class="dropdown-item d-flex align-items-center text-dark rounded px-3 py-2" href="{% url 'attendance_report'%}">
+            <a class="dropdown-item d-flex align-items-center text-dark rounded px-3 py-2" href="{% url 'attendance:mark_attendance'%}">
               <i class="fa fa-calendar-check me-2 text-danger"></i> Attendance
             </a>
           </li>
@@ -59,12 +59,12 @@
       <div class="collapse bg-white border rounded shadow-sm p-3 mt-2" id="vendorcollapse">
         <ul class="list-unstyled">
           <li class="mb-2">
-            <a class="dropdown-item d-flex align-items-center text-dark rounded px-3 py-2" href="{% url 'create_vendor'%}">
+            <a class="dropdown-item d-flex align-items-center text-dark rounded px-3 py-2" href="{% url 'vendor:create_vendor'%}">
               <i class="fa fa-plus-circle me-2 text-success"></i> Add
             </a>
           </li>
           <li>
-            <a class="dropdown-item d-flex align-items-center text-dark rounded px-3 py-2" href="{% url 'vendor_list' %}">
+            <a class="dropdown-item d-flex align-items-center text-dark rounded px-3 py-2" href="{% url 'vendor:vendor_list' %}">
               <i class="fa fa-eye me-2 text-danger"></i> View
             </a>
           </li>
@@ -130,7 +130,7 @@
         <div class="collapse bg-white border rounded shadow-sm p-3 mt-2" id="settingcollapse">
           <ul class="list-unstyled">
             <li>
-              <a class="dropdown-item d-flex align-items-center text-dark rounded px-3 py-2" href="{% url 'item_list'%}">
+              <a class="dropdown-item d-flex align-items-center text-dark rounded px-3 py-2" href="{% url 'items:item_list'%}">
                 <i class="fa fa-shopping-cart me-2 text-success"></i> Items
               </a>
             </li>
@@ -140,7 +140,7 @@
               </a>
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center text-dark rounded px-3 py-2" href="{% url 'unit_list'%}">
+              <a class="dropdown-item d-flex align-items-center text-dark rounded px-3 py-2" href="{% url 'units:unit_list'%}">
                 <i class="fa fa-ruler me-2 text-success"></i> Unit
               </a>
             </li>

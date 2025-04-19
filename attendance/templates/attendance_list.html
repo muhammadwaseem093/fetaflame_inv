@@ -3,65 +3,47 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center">
     <h2>Today's Attendance Report</h2>
-    <a href="{% url 'mark_attendance' %}">
-        <button type="button" class="btn btn-success">Mark Attendance</button>
-    </a>
 </div>
 
 <table class="table table-hover mt-3">
     <thead class="table-dark">
         <tr>
             <th scope="col">Employee Name</th>
-            <th scope="col">Present</th>
-            <th scope="col">Absent</th>
-            <th scope="col">Late</th>
+            <th scope="col">Check In</th>
+            <th scope="col">Check Out</th>
+            <th scope="col">Status</th>
+            <th scope="col">Late (Minutes)</th>
             <th scope="col">Action</th>
         </tr>
     </thead>
     <tbody>
-    {% for employee in employees %}
-    <tr>
-        <td>{{ employee.name }}</td>
-        
-        <!-- Present status -->
-        <td>
-            {% if employee.attendance_today and not employee.attendance_today.is_late %}
-                <i class="fas fa-check-circle text-success"></i> <!-- Tick icon for present -->
-            {% else %}
-                <i class="fas fa-times-circle text-danger"></i> <!-- Cross icon for absent -->
-            {% endif %}
-        </td>
-
-        <!-- Absent status -->
-        <td>
-            {% if employee.attendance_today %}
-                {% if employee.attendance_today.is_late %}
-                    <i class="fas fa-check-circle text-success"></i> <!-- Present but late -->
+        {% for record in attendance_data %}
+        <tr>
+            <td><a href="{% url 'attendance:employee_detailed_attendance' record.employee_id %}">{{record.employee}}</a></td>
+            <td>{{ record.check_in }}</td>
+            <td>{{ record.check_out }}</td>
+            <td>
+                <span class="badge {% if record.status == '✅ Present' %} bg-success {% else %} bg-danger {% endif %}">
+                    {{ record.status }}
+                </span>
+            </td>
+            <td>
+                {% if record.late != "🟢 No" %}
+                    <span class="badge bg-warning text-dark">{{ record.late }}</span>
                 {% else %}
-                    <i class="fas fa-times-circle text-danger"></i> <!-- Absent -->
+                    <span class="badge bg-success">{{ record.late }}</span>
                 {% endif %}
-            {% else %}
-                <i class="fas fa-times-circle text-danger"></i> <!-- Cross icon for absent -->
-            {% endif %}
-        </td>
-        
-        <!-- Late minutes -->
-        <td>
-            {% if employee.attendance_today and employee.attendance_today.is_late %}
-                {{ employee.attendance_today.late }} mins
-            {% else %}
-                -
-            {% endif %}
-        </td>
-
-        <!-- Action column for possible future actions like editing attendance -->
-        <td>
-            <a href="#">
-                <button class="btn btn-warning btn-sm">Edit</button>
-            </a>
-        </td>
-    </tr>
-    {% endfor %}
+            </td>
+            <td>
+                <a href="" class="btn btn-primary btn-sm">Edit</a>
+                <a href="" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this record?');">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">No attendance records found.</td>
+        </tr>
+        {% endfor %}
     </tbody>
 </table>
 {% endblock %}

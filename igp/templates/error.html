@@ -1,11 +1,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="alert alert-danger">
-        <h2>Access Denied</h2>
-        <p>You are not authorized to perform this action.</p>
-        <a href="{% url 'igp_list' %}" class="btn btn-primary">Go Back</a>
+<div class="container text-center mt-5">
+    <div class="card shadow-lg border-danger animated fadeInDown" style="max-width: 500px; margin: auto;">
+        <div class="card-body">
+            <!-- Warning Icon -->
+            <div class="text-danger mb-3">
+                <i class="fas fa-exclamation-circle fa-4x"></i>
+            </div>
+
+            <h2 class="text-danger">Access Denied</h2>
+            <p class="text-muted">Oops! You don’t have the necessary permissions to perform this action.</p>
+
+            <!-- Animated Alert -->
+            <div class="alert alert-danger d-flex align-items-center justify-content-center">
+                <i class="fas fa-ban me-2"></i> Unauthorized Access
+            </div>
+
+            <!-- Go Back Button -->
+            <a href="javascript:history.back()" class="btn btn-outline-primary btn-lg mt-3">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </a>
+        </div>
     </div>
 </div>
+
+<!-- FontAwesome for Icons (Ensure it's included in base.html) -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<!-- Custom Animation -->
+<style>
+    .animated {
+        animation-duration: 1s;
+        animation-fill-mode: both;
+    }
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .fadeInDown {
+        animation-name: fadeInDown;
+    }
+</style>
 {% endblock %}

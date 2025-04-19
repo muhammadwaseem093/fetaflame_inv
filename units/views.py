@@ -22,7 +22,7 @@ def create_unit(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Unit Created Successfully!")
-            return redirect('unit_list')
+            return redirect('units:unit_list')
         else:
             messages.error(request, "Unit Creation Failed")
     else:
@@ -31,7 +31,7 @@ def create_unit(request):
 
 
 @login_required
-@role_required('staff','hr','admin')
+@role_required('admin')
 def update_unit(request, pk):
     unit = Unit.objects.get(id=pk)
     if request.method == "POST":
@@ -39,7 +39,7 @@ def update_unit(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Unit Updated Successfully!')
-            return redirect('unit_list')
+            return redirect('units:unit_list')
         else:
             messages.error(request, "Unit Update Failed")
     else:
@@ -48,7 +48,7 @@ def update_unit(request, pk):
 
 
 @login_required
-@role_required('hr','admin')
+@role_required('admin')
 def delete_unit(request, pk):
     try:
         unit = Unit.objects.get(id=pk)
@@ -57,5 +57,8 @@ def delete_unit(request, pk):
     if request.method == 'POST':
         unit.delete()
         messages.success(request, 'Unit Deleted Successfully!')
-        return redirect('unit_list')
+        return redirect('units:unit_list')
     return render(request, 'delete_unit.html', {"unit":unit})
+
+def error_page(request):
+    return render(request, 'error.html')

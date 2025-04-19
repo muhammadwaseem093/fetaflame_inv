@@ -64,7 +64,9 @@ def create_ogp(request):
     if request.method  == "POST":
         form = OGPForm(request.POST)
         if form.is_valid():
-            ogp = form.save()
+            ogp = form.save(commit=False)
+            ogp.created_by=request.user
+            ogp.save()
             ogp_number = ogp.ogp_number
             return redirect(reverse('create_ogp_items')+f"?ogp_number={ogp_number}")
     else:
@@ -77,30 +79,34 @@ def create_ogp(request):
 def create_ogp_items(request):
     ogp_number = request.GET.get('ogp_number') or request.POST.get('ogp_number')
     if not ogp_number:
-        raise Http404('OGP Number is required')
+        return JsonResponse({'success': False, 'message': 'No OGP Number Provided'})
     ogp = get_object_or_404(OGP, ogp_number=ogp_number)
     items = Item.objects.all()
     units = Unit.objects.all()
     
     if request.method == "POST":
         item_forms  = []
-        num_items = len(request.POST) // 4
+        num_items = len(request.POST) // 5
         
         for i in range(1, num_items + 1):
             item_key = f'item_{i}'
+            item_no_key=f'item_no_{i}'
             description_key = f'description_{i}'
             unit_key = f'unit_{i}'
             quantity_key = f'quantity_{i}'
             
             
             item_id = request.POST.get(item_key)
+            item_no=request.POST.get(item_no_key)
             description = request.POST.get(description_key)
             unit_id = request.POST.get(unit_key)
             quantity = request.POST.get(quantity_key)
             
+            item = Item.objects.get(id=item_id)
             if item_id: 
                 data = {
                     'item':item_id,
+                    'item_no':item.item_no,
                     'description':description,
                     'unit':unit_id,
                     'quantity':quantity,
@@ -124,7 +130,7 @@ def create_ogp_items(request):
 
 
 @login_required
-@role_required('staff','hr','admin')
+@role_required('admin')
 def update_ogp(request, pk):
     ogp = get_object_or_404(OGP, pk=pk)
     vendors = Vendor.objects.all()
@@ -141,7 +147,7 @@ def update_ogp(request, pk):
 
 
 @login_required
-@role_required('staff','hr','admin')
+@role_required('admin')
 def update_ogp_items(request, ogp_number):
     ogp = get_object_or_404(OGP, ogp_number=ogp_number)
     items = Item.objects.all()
@@ -182,7 +188,7 @@ def update_ogp_items(request, ogp_number):
             
             
 @login_required
-@role_required('staff','hr','admin')
+@role_required('admin')
 def delete_ogp(request, pk):
     try:
         ogp = OGP.objects.get(pk=pk)
@@ -193,3 +199,6 @@ def delete_ogp(request, pk):
         messages.success(request, 'OGP Deleted Successfully')
         return redirect('ogp_list')
     return render(request, 'delete_ogp.html', {'ogp':ogp})
+
+def error_page(request):
+    return render(request, 'error.html')

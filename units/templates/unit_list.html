@@ -9,7 +9,7 @@
 </nav>
 <div class="d-flex justify-content-center position-relative mb-3">
     <h3 class="text-center w-100">Unit List</h3>
-    <a href="{% url 'create_unit'%}">
+    <a href="{% url 'units:create_unit'%}">
     <button type="button" class="btn btn-success position-absolute end-0">Add</button></a>
 </div>
 
@@ -31,8 +31,8 @@
         <td>{{unit.name}}</td>
         <td>{{unit.description}}</td>
         <td>
-            <a href="{% url 'update_unit' unit.id %}" class="text-primary"><i class="fa fa-edit"></i></a>
-            <a href="{% url 'delete_unit' unit.id %}" class="text-danger ms-3"><i class="fa fa-trash"></i></a>
+            <a href="{% url 'units:update_unit' unit.id %}" class="text-primary"><i class="fa fa-edit"></i></a>
+            <a href="{% url 'units:delete_unit' unit.id %}" class="text-danger ms-3"><i class="fa fa-trash"></i></a>
         </td>
       </tr>
       {%endfor %}
