@@ -329,9 +329,16 @@
                                 <canvas id="canvas" style="display: none;"></canvas>
                                 <button type="button" id="capture" class="btn btn-success">Capture Photo</button>
                             </div>
+                            {% if employees.photo %}
+                            <div id="captured-image-preview" style="width: 100px; height: 75px; margin: 10px auto;">
+                                <img id="captured-image" src="{{ employees.photo.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            {% else %}
                             <div id="captured-image-preview" style="display: none; width: 100px; height: 75px; margin: 10px auto;">
                                 <img id="captured-image" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
+                            {% endif %}
+                            
                             <input type="file" name="photo" id="photo" style="display: none;">
                         </div>
                     </div>
