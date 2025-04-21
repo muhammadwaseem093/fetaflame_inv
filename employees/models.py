@@ -6,14 +6,14 @@ from datetime import date
 
 class Employee(models.Model):
     photo = models.ImageField(upload_to='', blank=True, null=True)
-    face_encoding = models.JSONField(blank=True, null=True)
+    stauts = models.CharField(max_length=20, choices=[('active', 'Active'), ('on_leave', 'On Leave'),('retired','Retired'),('terminated','Terminated')], default='Active')
     name = models.CharField(max_length=255,null=True, blank=True)
     father_name = models.CharField(max_length=255, blank=True, null=True)
     cnic = models.CharField(max_length=15, blank=True, null=True)
     dob = models.DateField(null=True, blank=True)
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
-    religious = models.CharField(max_length=50, blank=True)
-    marital_status = models.CharField(max_length=20, blank=True)
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'),('Others','Others')], default='Male')
+    religious = models.CharField(max_length=20, choices=[('Islam', 'Islam'), ('Christianity', 'Christianity'), ('Hinduism', 'Hinduism'), ('Others', 'Others')], default='Islam')
+    marital_status = models.CharField(max_length=20, choices=[('Single', 'Single'), ('Married', 'Married'), ('Divorced', 'Divorced'), ('Widowed', 'Widowed')], default='Single')
     current_job = models.CharField(max_length=255, blank=True, null=True)
     previous_job_title = models.CharField(max_length=255, blank=True, null=True)
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
@@ -23,6 +23,18 @@ class Employee(models.Model):
     contact_no = models.CharField(max_length=15, blank=True, null=True)
     previous_job_start = models.DateField(blank=True, null=True)
     previous_job_end = models.DateField(blank=True, null=True)
+    basic_salary = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    traveling_allowance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    medical_allowance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    food_allowance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    marriage_allowance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    house_allowance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    casual_leave = models.IntegerField(blank=True, null=True)
+    sick_leave = models.IntegerField(blank=True, null=True)
+    annual_leave = models.IntegerField(blank=True, null=True)
+    medical_leave = models.IntegerField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True ,null=True , blank=True) 
+    updated_at = models.DateTimeField(auto_now=True, null=True , blank=True)
     
 
     def calculate_previous_job_duration(self):
