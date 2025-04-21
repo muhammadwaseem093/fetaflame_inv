@@ -37,7 +37,7 @@ class EmployeeForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control' , 'placeholder': 'Enter Name'}),
             'father_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Father Name'}),
-            'cnic': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter CNIC'}),
+            'cnic': forms.TextInput(attrs={'class': 'form-control', 'oninput':'formatCNIC(this)'}),
             'dob': forms.DateInput(attrs={'type': 'date', 'class': 'form-control', 'placeholder': 'Enter Date of Birth'}),
             'gender': forms.Select(attrs={'class': 'form-control'}),
             'religious': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select Religious'}),
@@ -48,7 +48,7 @@ class EmployeeForm(forms.ModelForm):
             'designation': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Designation'}),
             'current_address': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter Current Address'}),
             'permanent_address': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter Permanent Address'}),
-            'contact_no': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Contact Number'}),
+            'contact_no': forms.TextInput(attrs={'class': 'form-control', 'oninput':'formatContactNo(this)'}),
             'previous_job_start': forms.DateInput(attrs={'type': 'date', 'class': 'form-control', 'placeholder': 'Enter Previous Job Start Date'}),
             'previous_job_end': forms.DateInput(attrs={'type': 'date', 'class': 'form-control', 'placeholder': 'Enter Previous Job End Date'}),
             'basic_salary': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Basic Salary'}),

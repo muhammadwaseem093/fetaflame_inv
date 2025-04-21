@@ -4,8 +4,8 @@
 <div class="container mt-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb bg-light p-2 rounded">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">Employee List</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home'%}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{%url 'employees:employee_list'%}">Employee List</a></li>
             <li class="breadcrumb-item active" aria-current="page">Add Employee</li>
         </ol>
     </nav>
@@ -30,36 +30,36 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="name" placeholder="Name" name="name">
-                                    <label for="name">Full Name</label>
+                                    {{form.name}}
+                                    {{form.name.errors}}
+                                    <label for="id_name">Full Name</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="father_name" placeholder="Father Name" name="father_name">
+                                    {{form.father_name}}
+                                    {{form.father_name.errors}}
                                     <label for="father_name">Father Name</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-floating">
-                                  <input type="text" class="form-control" id="cnic" placeholder="XXXXX-XXXXXXX-X" maxlength="15" oninput="formatCNIC(this)" name="cnic">
+                                {{form.cnic}}
+                                {{form.cnic.errors}}
                                   <label for="cnic">CNIC (XXXXX-XXXXXXX-X)</label>
                               </div>
                           </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="date" class="form-control" name="dob" id="dob">
+                                    {{form.dob}}
+                                    {{form.dob.errors}}
                                     <label for="dob">Date of Birth</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-floating">
-                                <select class="form-control" id="gender" name="gender">
-                                    <option selected disabled>Select Gender</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Others">Others</option>
-                                </select>
+                                {{form.gender}}
+                                {{form.gender.errors}}
                                   <label for="gender">Gender</label>
                               </div>
                           </div>
@@ -68,27 +68,16 @@
                           
                           <div class="col-md-6">
                               <div class="form-floating">
-                                <select class="form-control" id="religious" name="religious">
-                                    <option selected disabled>Select Religion</option>
-                                    <option value="Islam">Islam</option>
-                                    <option value="Christianity">Christianity</option>
-                                    <option value="Hinduism">Hinduism</option>
-                                    <option value="Sikhism">Sikhism</option>
-                                    <option value="Others">Others</option>
-                                </select>
+                                {{form.religious}}
+                                {{form.religious.errors}}
                                   <label for="religious">Religious</label>
                               </div>
                           </div>
                           
                           <div class="col-md-6">
                               <div class="form-floating">
-                                <select class="form-control" id="marital_status" name="marital_status">
-                                    <option selected disabled>Select Marital Status</option>
-                                    <option value="Single">Single</option>
-                                    <option value="Married">Married</option>
-                                    <option value="Divorced">Divorced</option>
-                                    <option value="Widowed">Widowed</option>
-                                </select>
+                                {{form.marital_status}}
+                                {{form.marital_status.errors}}
                                   <label for="marital_status">Marital Status</label>
                               </div>
                           </div>
@@ -111,7 +100,8 @@
                           <!-- Current Job -->
                           <div class="col-md-6">
                               <div class="form-floating">
-                                  <input type="text" class="form-control" id="current_job" placeholder="Current Job" name="current_job">
+                                {{form.current_job}}
+                                {{form.current_job.errors}}
                                   <label for="current_job">Current Job</label>
                               </div>
                           </div>
@@ -127,21 +117,24 @@
                               <div class="row g-3 mt-2">
                                   <div class="col-md-6">
                                       <div class="form-floating">
-                                          <input type="text" class="form-control" id="previous_job_title" placeholder="Previous Job Title" name="previous_job_title">
+                                        {{form.previous_job_title}}
+                                        {{form.previous_job_title.errors}}
                                           <label for="previous_job_title">Previous Job Title</label>
                                       </div>
                                   </div>
           
                                   <div class="col-md-6">
                                       <div class="form-floating">
-                                          <input type="date" class="form-control" id="previous_job_start" name="previous_job_start">
+                                        {{form.previous_job_start}}
+                                        {{form.previous_job_start.errors}}
                                           <label for="previous_job_start">Start Date</label>
                                       </div>
                                   </div>
           
                                   <div class="col-md-6">
                                       <div class="form-floating">
-                                          <input type="date" class="form-control" id="previous_job_end" name="previous_job_end">
+                                        {{form.previous_job_end}}
+                                        {{form.previous_job_end.errors}}
                                           <label for="previous_job_end">End Date</label>
                                       </div>
                                   </div>
@@ -151,19 +144,16 @@
                           </div>
                           <div class="col-md-6">
                             <div class="form-floating">
-                                <select class="form-control" id="department" name="department">
-                                    <option selected disabled>Select Department</option>
-                                    {% for dept in departments %}
-                                    <option value="{{ dept.id }}">{{ dept.name }}</option>
-                                    {% endfor %}
-                                </select>
+                                {{form.department}}
+                                {{form.department.errors}}
                                 <label for="department">Department</label>
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="designation" placeholder="Designation" name="designation">
+                                {{form.designation}}
+                                {{form.designation.errors}}
                                 <label for="designation">Designation</label>
                             </div>
                         </div>
@@ -185,7 +175,8 @@
                           <!-- Current Address -->
                           <div class="col-md-6">
                               <div class="form-floating">
-                                  <input type="text" class="form-control" id="current_address" placeholder="Current Address" name="current_address">
+                                    {{form.current_address}}
+                                    {{form.current_address.errors}}
                                   <label for="current_address">Current Address</label>
                               </div>
                           </div>
@@ -193,7 +184,8 @@
                           <!-- Permanent Address -->
                           <div class="col-md-6">
                               <div class="form-floating">
-                                  <input type="text" class="form-control" id="permanent_address" placeholder="Permanent Address" name="permanent_address">
+                                    {{form.permanent_address}}
+                                    {{form.permanent_address.errors}}
                                   <label for="permanent_address">Permanent Address</label>
                               </div>
                           </div>
@@ -201,7 +193,8 @@
                           <!-- Contact Number -->
                           <div class="col-md-6">
                               <div class="form-floating">
-                                  <input type="text" class="form-control" id="contact_no" placeholder="Contact No" oninput="formatContactNo(this)" name="contact_no">
+                                    {{form.contact_no}}
+                                    {{form.contact_no.errors}}
                                   <label for="contact_no">Contact No (0000-0000000)</label>
                               </div>
                           </div>
@@ -209,6 +202,115 @@
                   </div>
               </div>
             </div>
+            <!----Salary Information-->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSalary">
+                       Salary Information
+                    </button>
+                </h2>
+                <div id="collapseSalary" class="accordion-collapse collapse" data-bs-parent="#employeeAccordion">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                            <!-- Current Address -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                      {{form.basic_salary}}
+                                      {{form.basic_salary.errors}}
+                                    <label for="basic_salary">Basic Salary</label>
+                                </div>
+                            </div>
+            
+                            <!-- Permanent Address -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                      {{form.traveling_allowance}}
+                                      {{form.traveling_allowance.errors}}
+                                      <label for="traveling_allowance">Traveling Allowance</label>
+                                </div>
+                            </div>
+            
+                            <!-- Contact Number -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.medical_allowance}}
+                                        {{form.medical_allowance.errors}}
+                                        <label for="medical_allowance">Medical Allowance</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.food_allowance}}
+                                        {{form.food_allowance.errors}}
+                                        <label for="food_allowance">Food Allowance</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.marriage_allowance}}
+                                        {{form.marriage_allowance.errors}}
+                                        <label for="marriage_allowance">Marriage Allowance</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.house_allowance}}
+                                        {{form.house_allowance.errors}}
+                                        <label for="house_allowance">House Allowance</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+              <!----Allowance Information-->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLeaves">
+                       Leaves Information
+                    </button>
+                </h2>
+                <div id="collapseLeaves" class="accordion-collapse collapse" data-bs-parent="#employeeAccordion">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                            <!-- Current Address -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                      {{form.casual_leave}}
+                                      {{form.casual_leave.errors}}
+                                    <label for="casual_leave">Casual Leaves</label>
+                                </div>
+                            </div>
+            
+                            <!-- Permanent Address -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.sick_leave}}
+                                        {{form.sick_leave.errors}}
+                                        <label for="sick_leave">Sick Leaves</label>
+                                </div>
+                            </div>
+            
+                            <!-- Contact Number -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.annual_leave}}
+                                        {{form.annual_leave.errors}}
+                                        <label for="annual_leave">Annual Leaves</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.medical_leave}}
+                                        {{form.medical_leave.errors}}
+                                        <label for="medical_leave">Medical Leaves</label>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+              </div>
              <!---Employee Photo Capture--->
              <div class="accordion" id="employeeAccordion">
                 <div class="accordion-item">
@@ -282,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let cameraContainer = document.getElementById('camera-container');
     let capturedImagePreview = document.getElementById('captured-image-preview');
     let capturedImage = document.getElementById('captured-image');
-    let employeeNameInput=document.getElementById('name');
+    let employeeNameInput=document.getElementById('id_name');
 
     let stream;
 

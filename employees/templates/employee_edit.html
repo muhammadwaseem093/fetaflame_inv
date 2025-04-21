@@ -4,14 +4,14 @@
 <div class="container mt-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb bg-light p-2 rounded">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'employees:employee_list' %}">Employees</a></li>
-                          <li class="breadcrumb-item active" aria-current="page">Add Employee</li>
+            <li class="breadcrumb-item"><a href="{% url 'home'%}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{%url 'employees:employee_list'%}">Employee List</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add Employee</li>
         </ol>
     </nav>
 
     <div class="text-center mb-4">
-        <h1 class="h3 fw-bold">Add Employee</h1>
+        <h1 class="h3 fw-bold">Update Employee</h1>
     </div>
 
     <form method="post" action="{% url 'employees:update_employee' employees.id %}" class="border rounded p-4 shadow-lg bg-white" enctype="multipart/form-data">
@@ -30,36 +30,36 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="name" placeholder="Name" name="name" value={{employees.name}}>
-                                    <label for="name">Full Name</label>
+                                    {{form.name}}
+                                    {{form.name.errors}}
+                                    <label for="id_name">Full Name</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="father_name" placeholder="Father Name" name="father_name" value={{employees.father_name}}>
+                                    {{form.father_name}}
+                                    {{form.father_name.errors}}
                                     <label for="father_name">Father Name</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-floating">
-                                  <input type="text" class="form-control" id="cnic" placeholder="XXXXX-XXXXXXX-X" maxlength="15" oninput="formatCNIC(this)" name="cnic" value={{employees.cnic}}>
+                                {{form.cnic}}
+                                {{form.cnic.errors}}
                                   <label for="cnic">CNIC (XXXXX-XXXXXXX-X)</label>
                               </div>
                           </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="date" class="form-control" name="dob" id="dob" value="{{employees.dob|date:'Y-m-d'}}">
+                                    {{form.dob}}
+                                    {{form.dob.errors}}
                                     <label for="dob">Date of Birth</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-floating">
-                                <select class="form-control" id="gender" name="gender" >
-                                    <option value="{{employees.gender}}" selected>{{employees.gender}}</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Others">Others</option>
-                                </select>
+                                {{form.gender}}
+                                {{form.gender.errors}}
                                   <label for="gender">Gender</label>
                               </div>
                           </div>
@@ -68,27 +68,16 @@
                           
                           <div class="col-md-6">
                               <div class="form-floating">
-                                <select class="form-control" id="religious" name="religious">
-                                    <option value="{{employees.religious}}" selected>{{employees.religious}}</option>
-                                    <option value="Islam">Islam</option>
-                                    <option value="Christianity">Christianity</option>
-                                    <option value="Hinduism">Hinduism</option>
-                                    <option value="Sikhism">Sikhism</option>
-                                    <option value="Others">Others</option>
-                                </select>
+                                {{form.religious}}
+                                {{form.religious.errors}}
                                   <label for="religious">Religious</label>
                               </div>
                           </div>
                           
                           <div class="col-md-6">
                               <div class="form-floating">
-                                <select class="form-control" id="marital_status" name="marital_status">
-                                    <option value="{{employees.marital_status}}" selected> {{employees.marital_status}}</option>
-                                    <option value="Single">Single</option>
-                                    <option value="Married">Married</option>
-                                    <option value="Divorced">Divorced</option>
-                                    <option value="Widowed">Widowed</option>
-                                </select>
+                                {{form.marital_status}}
+                                {{form.marital_status.errors}}
                                   <label for="marital_status">Marital Status</label>
                               </div>
                           </div>
@@ -111,41 +100,41 @@
                           <!-- Current Job -->
                           <div class="col-md-6">
                               <div class="form-floating">
-                                  <input type="text" class="form-control" id="current_job" placeholder="Current Job" name="current_job" value={{employees.current_job}}>
+                                {{form.current_job}}
+                                {{form.current_job.errors}}
                                   <label for="current_job">Current Job</label>
                               </div>
                           </div>
           
                           <!-- Checkbox for Previous Job -->
-                          
                           <div class="col-md-6 d-flex align-items-center">
-                              <input type="checkbox" id="has_previous_job" class="form-check-input me-2" 
-                              {% if employees.previous_job_start %} checked {% endif %} 
-                              onchange="togglePreviousJob()">
+                              <input type="checkbox" id="has_previous_job" class="form-check-input me-2" onchange="togglePreviousJob()">
                               <label for="has_previous_job" class="form-check-label">Have Previous Job?</label>
                           </div>
-
           
                           <!-- Previous Job Section (Hidden by Default) -->
-                          <div id="previous_job_section" style="display: {% if employees.previous_job_start %} block {% else %} none {% endif %};">
+                          <div id="previous_job_section" style="display: none;">
                               <div class="row g-3 mt-2">
                                   <div class="col-md-6">
                                       <div class="form-floating">
-                                          <input type="text" class="form-control" id="previous_job_title" placeholder="Previous Job Title" name="previous_job_title" value={{employees.previous_job_title}}>
+                                        {{form.previous_job_title}}
+                                        {{form.previous_job_title.errors}}
                                           <label for="previous_job_title">Previous Job Title</label>
                                       </div>
                                   </div>
           
                                   <div class="col-md-6">
                                       <div class="form-floating">
-                                          <input type="date" class="form-control" id="previous_job_start" name="previous_job_start" value={{employees.previous_job_start|date:'Y-m-d'}}>
+                                        {{form.previous_job_start}}
+                                        {{form.previous_job_start.errors}}
                                           <label for="previous_job_start">Start Date</label>
                                       </div>
                                   </div>
           
                                   <div class="col-md-6">
                                       <div class="form-floating">
-                                          <input type="date" class="form-control" id="previous_job_end" name="previous_job_end" value={{employees.previous_job_end|date:'Y-m-d'}}>
+                                        {{form.previous_job_end}}
+                                        {{form.previous_job_end.errors}}
                                           <label for="previous_job_end">End Date</label>
                                       </div>
                                   </div>
@@ -155,19 +144,16 @@
                           </div>
                           <div class="col-md-6">
                             <div class="form-floating">
-                                <select class="form-control" id="department" name="department">
-                                    <option value="{{employees.department}}" selected>{{employees.department}}</option>
-                                    {% for dept in departments %}
-                                    <option value="{{ dept.id }}">{{ dept.name }}</option>
-                                    {% endfor %}
-                                </select>
+                                {{form.department}}
+                                {{form.department.errors}}
                                 <label for="department">Department</label>
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="designation" placeholder="Designation" name="designation" value={{employees.designation}}>
+                                {{form.designation}}
+                                {{form.designation.errors}}
                                 <label for="designation">Designation</label>
                             </div>
                         </div>
@@ -189,7 +175,8 @@
                           <!-- Current Address -->
                           <div class="col-md-6">
                               <div class="form-floating">
-                                  <input type="text" class="form-control" id="current_address" placeholder="Current Address" name="current_address" value={{employees.current_address}}>
+                                    {{form.current_address}}
+                                    {{form.current_address.errors}}
                                   <label for="current_address">Current Address</label>
                               </div>
                           </div>
@@ -197,7 +184,8 @@
                           <!-- Permanent Address -->
                           <div class="col-md-6">
                               <div class="form-floating">
-                                  <input type="text" class="form-control" id="permanent_address" placeholder="Permanent Address" name="permanent_address" value={{employees.permanent_address}}>
+                                    {{form.permanent_address}}
+                                    {{form.permanent_address.errors}}
                                   <label for="permanent_address">Permanent Address</label>
                               </div>
                           </div>
@@ -205,7 +193,8 @@
                           <!-- Contact Number -->
                           <div class="col-md-6">
                               <div class="form-floating">
-                                  <input type="text" class="form-control" id="contact_no" placeholder="Contact No" oninput="formatContactNo(this)" name="contact_no" value={{employees.contact_no}}>
+                                    {{form.contact_no}}
+                                    {{form.contact_no.errors}}
                                   <label for="contact_no">Contact No (0000-0000000)</label>
                               </div>
                           </div>
@@ -213,6 +202,115 @@
                   </div>
               </div>
             </div>
+            <!----Salary Information-->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSalary">
+                       Salary Information
+                    </button>
+                </h2>
+                <div id="collapseSalary" class="accordion-collapse collapse" data-bs-parent="#employeeAccordion">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                            <!-- Current Address -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                      {{form.basic_salary}}
+                                      {{form.basic_salary.errors}}
+                                    <label for="basic_salary">Basic Salary</label>
+                                </div>
+                            </div>
+            
+                            <!-- Permanent Address -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                      {{form.traveling_allowance}}
+                                      {{form.traveling_allowance.errors}}
+                                      <label for="traveling_allowance">Traveling Allowance</label>
+                                </div>
+                            </div>
+            
+                            <!-- Contact Number -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.medical_allowance}}
+                                        {{form.medical_allowance.errors}}
+                                        <label for="medical_allowance">Medical Allowance</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.food_allowance}}
+                                        {{form.food_allowance.errors}}
+                                        <label for="food_allowance">Food Allowance</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.marriage_allowance}}
+                                        {{form.marriage_allowance.errors}}
+                                        <label for="marriage_allowance">Marriage Allowance</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.house_allowance}}
+                                        {{form.house_allowance.errors}}
+                                        <label for="house_allowance">House Allowance</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+              <!----Allowance Information-->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLeaves">
+                       Leaves Information
+                    </button>
+                </h2>
+                <div id="collapseLeaves" class="accordion-collapse collapse" data-bs-parent="#employeeAccordion">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                            <!-- Current Address -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                      {{form.casual_leave}}
+                                      {{form.casual_leave.errors}}
+                                    <label for="casual_leave">Casual Leaves</label>
+                                </div>
+                            </div>
+            
+                            <!-- Permanent Address -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.sick_leave}}
+                                        {{form.sick_leave.errors}}
+                                        <label for="sick_leave">Sick Leaves</label>
+                                </div>
+                            </div>
+            
+                            <!-- Contact Number -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.annual_leave}}
+                                        {{form.annual_leave.errors}}
+                                        <label for="annual_leave">Annual Leaves</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                        {{form.medical_leave}}
+                                        {{form.medical_leave.errors}}
+                                        <label for="medical_leave">Medical Leaves</label>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+              </div>
              <!---Employee Photo Capture--->
              <div class="accordion" id="employeeAccordion">
                 <div class="accordion-item">
@@ -223,8 +321,6 @@
                     </h2>
                     <div id="collapsePhoto" class="accordion-collapse collapse" data-bs-parent="#employeeAccordion">
                         <div class="accordion-body text-center">
-                       
-
                             <button type="button" id="openCamera" class="btn btn-primary">Open Camera</button>
                             <div id="camera-container" style="display: none;">
                                 <div id="video-frame">
@@ -236,25 +332,16 @@
                             <div id="captured-image-preview" style="display: none; width: 100px; height: 75px; margin: 10px auto;">
                                 <img id="captured-image" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
-                          
                             <input type="file" name="photo" id="photo" style="display: none;">
-                          {% if employees.photo %}
-                          <div>
-                            <img src="{{ employees.photo.url }}" alt="Employee Photo" style="width: 100px; height: 100px; object-fit: cover;">
-                          </div>
-                          {% else %}
-                          <p> No Photo Available</p>
-                          {% endif %}
                         </div>
                     </div>
                 </div>
-                
             </div>
         </div>
        
 
         <div class="d-flex justify-content-start mt-4">
-            <button type="submit" class="btn btn-success px-4 py-2 fw-bold">Submit</button>
+            <button type="submit" class="btn btn-success px-4 py-2 fw-bold">Update</button>
         </div>
 
     </form>
@@ -275,11 +362,7 @@
   function togglePreviousJob() {
     let checkbox = document.getElementById('has_previous_job');
     let previousJobSection = document.getElementById('previous_job_section');
-    if (checkbox.checked) {
-        previousJobSection.style.display = 'block';
-    } else {
-        previousJobSection.style.display = 'none';
-    }
+    previousJobSection.style.display = checkbox.checked ? 'block' : 'none';
 }
 
 function formatContactNo(input) {
@@ -301,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let cameraContainer = document.getElementById('camera-container');
     let capturedImagePreview = document.getElementById('captured-image-preview');
     let capturedImage = document.getElementById('captured-image');
-    let employeeNameInput=document.getElementById('name');
+    let employeeNameInput=document.getElementById('id_name');
 
     let stream;
 
@@ -321,52 +404,53 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     captureButton.addEventListener("click", () => {
-      // Set canvas dimensions to match video stream
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      let ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
-      // Define cropping parameters
-      let faceWidth = canvas.width * 0.6;  // Crop 50% width from the center
-      let faceHeight = canvas.height * 0.7; // Crop upper 60% (head & shoulders)
-      let startX = (canvas.width - faceWidth) / 2; // Center horizontally
-      let startY = canvas.height * 0.1;  // Start from top 10% (adjustable)
-  
-      // Create a cropped canvas for the head & shoulders
-      let croppedCanvas = document.createElement('canvas');
-      croppedCanvas.width = 200;  // Final output width
-      croppedCanvas.height = 200; // Final output height
-      let croppedCtx = croppedCanvas.getContext('2d');
-  
-      // Draw the selected area from the original canvas
-      croppedCtx.drawImage(canvas, startX, startY, faceWidth, faceHeight, 0, 0, 200, 200);
-  
-      // Convert cropped image to Base64
-      let croppedDataURL = croppedCanvas.toDataURL('image/jpeg');
-  
-      // Generate filename using employee name
-      let employeeName = employeeNameInput.value; // Ensure this input exists
-      let filename = employeeName + '.jpg';
-      let file = dataURLtoFile(croppedDataURL, filename);
-  
-      // Assign the cropped image to the file input for form submission
-      let dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
-      photoInput.files = dataTransfer.files;
-  
-      // Display captured image preview
-      capturedImage.src = croppedDataURL;
-      capturedImagePreview.style.display = 'block';
-      photoInput.style.display = "block";
-  
-      // Stop the camera stream after capture
-      if (stream) {
-          stream.getTracks().forEach(track => track.stop());
-          video.srcObject = null;
-          cameraContainer.style.display = 'none';
-      }
-  });
+        // Set canvas dimensions to match video stream
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        let ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+        // Define cropping parameters
+        let faceWidth = canvas.width * 0.6;  // Crop 50% width from the center
+        let faceHeight = canvas.height * 0.7; // Crop upper 60% (head & shoulders)
+        let startX = (canvas.width - faceWidth) / 2; // Center horizontally
+        let startY = canvas.height * 0.1;  // Start from top 10% (adjustable)
+    
+        // Create a cropped canvas for the head & shoulders
+        let croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = 200;  // Final output width
+        croppedCanvas.height = 200; // Final output height
+        let croppedCtx = croppedCanvas.getContext('2d');
+    
+        // Draw the selected area from the original canvas
+        croppedCtx.drawImage(canvas, startX, startY, faceWidth, faceHeight, 0, 0, 200, 200);
+    
+        // Convert cropped image to Base64
+        let croppedDataURL = croppedCanvas.toDataURL('image/jpeg');
+    
+        // Generate filename using employee name
+        let employeeName = employeeNameInput.value; // Ensure this input exists
+        let filename = employeeName + '.jpg';
+        let file = dataURLtoFile(croppedDataURL, filename);
+    
+        // Assign the cropped image to the file input for form submission
+        let dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        photoInput.files = dataTransfer.files;
+    
+        // Display captured image preview
+        capturedImage.src = croppedDataURL;
+        capturedImagePreview.style.display = 'block';
+        photoInput.style.display = "block";
+    
+        // Stop the camera stream after capture
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            video.srcObject = null;
+            cameraContainer.style.display = 'none';
+        }
+    });
+    
 
     function dataURLtoFile(dataurl, filename) {
         let arr = dataurl.split(','),
