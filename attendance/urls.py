@@ -10,6 +10,7 @@ urlpatterns = [
     path('emp_data', views.get_employee_data, name='get_employee_data'),
     path('mark/', views.mark_attendance, name='mark_attendance'),
     path('video_feed/', views.video_feed, name='video_feed'),
-    path('save_attendance/', views.save_attendance, name='save_attendance')
+    path('save_attendance/', views.save_attendance, name='save_attendance'),
+    path('delete/<int:attendance_id>/', views.delete_attendance, name='delete_attendance'),
   
 ]

@@ -4,7 +4,7 @@ import numpy as np
 import face_recognition
 import threading
 import mediapipe as mp
-# import request 
+from datetime import datetime, time 
 from django.shortcuts import render
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import JsonResponse, StreamingHttpResponse
@@ -157,7 +157,30 @@ def save_attendance(request):
 
         try:
             employee = Employee.objects.get(name=name)
-            Attendance.objects.create(employee=employee, attendance_type=att_type, timestamp=timezone.now())
+            now = timezone.now()
+            today = now.date()
+            late_minutes = 0
+            if att_type == "Check In" and employee.status == "active":
+                already_checked_in = Attendance.objects.filter(employee=employee, attendance_type="Check In", date=today).exists()
+                if already_checked_in:
+                    return JsonResponse({"error": "Already checked in"}, status=400)
+                
+                
+                expected_time = time(8, 0,0)
+                expected_datetime = timezone.make_aware(datetime.combine(today, expected_time))
+                
+                if now > expected_datetime:
+                    late_delta = now - expected_datetime
+                    late_minutes = int(late_delta.total_seconds() // 60)
+                
+            Attendance.objects.create(
+                employee=employee, 
+                attendance_type=att_type, 
+                timestamp=now, 
+                late_minutes=late_minutes,
+                status="Present" if att_type == "Check In" else "Absent",
+                date=today
+                )
             return redirect('attendance:attendance_list')
         except Employee.DoesNotExist:
             return JsonResponse({"error": "Employee not found"}, status=404)
@@ -167,62 +190,67 @@ def save_attendance(request):
 
 def get_daily_summary(request, date=None):
     today = datetime.today().date() if date is None else date
-    records = Attendance.objects.filter(timestamp__date=today).order_by('timestamp')
+    records = Attendance.objects.filter(timestamp__date=today).order_by('employee', 'timestamp')
 
-    work_start = None
-    work_end = None
-    late_minutes = 0
-    break_minutes = 0
-    market_minutes = 0
-    vendor_minutes = 0
+    # Group records by employee
+    attendance_data = []
+    employees = set(r.employee for r in records)
 
-    i = 0
-    while i < len(records):
-        r = records[i]
-        
-        # Count late time for Check In only if employee is active
-        if r.attendance_type == "Check In":
-            if r.employee.status == "active":
-                late_minutes = r.is_late()  # Get late minutes for this record
-            work_start = r.timestamp
-        
-        # Calculate work end time
-        if r.attendance_type == "Check Out":
-            work_end = r.timestamp
-        
-        # Handle Breaks (Break Out and Break In)
-        elif r.attendance_type == "Break Out":
-            if i + 1 < len(records) and records[i + 1].attendance_type == "Break In":
-                break_duration = records[i + 1].timestamp - r.timestamp
-                break_minutes += int(break_duration.total_seconds() / 60)
-                i += 1
-        
-        # Handle Market and Vendor Time
-        elif r.attendance_type == "For Market":
-            if i + 1 < len(records) and records[i + 1].attendance_type == "From Market":
-                market_duration = records[i + 1].timestamp - r.timestamp
-                market_minutes += int(market_duration.total_seconds() / 60)
-                i += 1
-        elif r.attendance_type == "For Vendor":
-            if i + 1 < len(records) and records[i + 1].attendance_type == "From Vendor":
-                vendor_duration = records[i + 1].timestamp - r.timestamp
-                vendor_minutes += int(vendor_duration.total_seconds() / 60)
+    for employee in employees:
+        emp_records = [r for r in records if r.employee == employee]
+
+        check_in = next((r.timestamp for r in emp_records if r.attendance_type == "Check In"), None)
+        check_out = next((r.timestamp for r in emp_records if r.attendance_type == "Check Out"), None)
+        status = "✅ Present" if check_in else "❌ Absent"
+
+        late_minutes = 0
+        break_minutes = 0
+        market_minutes = 0
+        vendor_minutes = 0
+        work_minutes = 0
+
+        i = 0
+        while i < len(emp_records):
+            r = emp_records[i]
+            
+            if r.attendance_type == "Check In" and employee.status == "active":
+                late_minutes = r.is_late()
+                print(f"Late minutes for {employee.name}: {late_minutes} min")
+
+            elif r.attendance_type == "Break Out" and i + 1 < len(emp_records) and emp_records[i + 1].attendance_type == "Break In":
+                duration = emp_records[i + 1].timestamp - r.timestamp
+                break_minutes += int(duration.total_seconds() / 60)
                 i += 1
 
-        i += 1
-    
-    # Calculate total work time after deductions
-    total_work_minutes = 0
-    if work_start and work_end:
-        total_duration = work_end - work_start
-        total_work_minutes = int(total_duration.total_seconds() / 60) - (break_minutes + market_minutes + vendor_minutes + late_minutes)
+            elif r.attendance_type == "For Market" and i + 1 < len(emp_records) and emp_records[i + 1].attendance_type == "From Market":
+                duration = emp_records[i + 1].timestamp - r.timestamp
+                market_minutes += int(duration.total_seconds() / 60)
+                i += 1
 
-    return render (request, "attendance_list.html", {
-        'work_minutes': total_work_minutes,
-        'late_minutes': late_minutes,
-        'break_minutes': break_minutes,
-        'market_minutes': market_minutes,
-        'vendor_minutes': vendor_minutes
+            elif r.attendance_type == "For Vendor" and i + 1 < len(emp_records) and emp_records[i + 1].attendance_type == "From Vendor":
+                duration = emp_records[i + 1].timestamp - r.timestamp
+                vendor_minutes += int(duration.total_seconds() / 60)
+                i += 1
+
+            i += 1
+
+        if check_in and check_out:
+            total_duration = check_out - check_in
+            work_minutes = int(total_duration.total_seconds() / 60) - (
+                break_minutes + market_minutes + vendor_minutes + late_minutes
+            )
+
+        attendance_data.append({
+            'employee': employee,
+            'check_in': check_in,
+            'check_out': check_out,
+            'status': status,
+            'late': f"{late_minutes} min" if late_minutes > 0 else "🟢 No",
+            'work_minutes': work_minutes,
+        })
+
+    return render(request, "attendance_list.html", {
+        'attendance_data': attendance_data,
     })
 
 
@@ -369,3 +397,17 @@ def employee_detailed_attendance(request, employee_id=None):
     print(attendance_data)
 
     return render(request, "attendance_list.html", {"attendance_data": attendance_data})
+
+
+# delete daily attendance record if need
+def delete_attendance(request, attendance_id):
+    """ Delete an Attendance record by ID """
+    try:
+        if request.method == "POST":
+            attendance = get_object_or_404(Attendance, id=attendance_id)
+            attendance.delete()
+            return redirect('attendance:attendance_list')
+        return redirect('attendance:attendance_list')
+    except Attendance.DoesNotExist:
+        return JsonResponse({"error": "Attendance record not found"}, status=404)
+    
