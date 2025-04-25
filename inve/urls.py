@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from accounts.views import global_error_page
 from items.views import custom_404
+from accounts.views import login_view, register_view
 
 handler404 = custom_404
 
@@ -12,6 +13,8 @@ handler404 = custom_404
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("register/", register_view, name="register_view"),
+    path('', login_view, name="login_view"),
     path('accounts/', include('accounts.urls')),
     path('employees/', include('employees.urls')),
     path('departments/', include('departments.urls')),
