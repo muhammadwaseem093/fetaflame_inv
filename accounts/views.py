@@ -10,6 +10,7 @@ from employees.models import Employee
 import datetime
 from django.contrib.auth import logout
 from django.views.decorators.http import require_POST
+from datetime import date
 
 
 def register_view(request):
@@ -48,7 +49,25 @@ def login_view(request):
 @login_required
 @role_required('admin')
 def admin_dashboard(request):
-    return render(request, 'dashboard/admin_dashboard.html')
+    today = date.today()
+
+    context = {
+        'total_employees': 150,
+        'present_today': 120,
+        'absent_today': 20,
+        'late_today': 10,
+        'todays_ogp': 5,
+        'pending_igp': 3,
+        'pending_ogp': 2,
+        'recent_logs': [
+            {'activity_type': 'New IGP', 'description': 'Received 100 items', 'timestamp': '10:30 AM'},
+            {'activity_type': 'New OGP', 'description': 'Shipped 80 items', 'timestamp': '11:00 AM'},
+            {'activity_type': 'New Supplier', 'description': 'ABC Ltd. added', 'timestamp': '12:15 PM'},
+            {'activity_type': 'New Vendor', 'description': 'XYZ Pvt. Ltd. added', 'timestamp': '1:00 PM'},
+        ]
+    }
+    return render(request, 'dashboard/admin_dashboard.html', context)
+
 
 @login_required
 @role_required('hr')

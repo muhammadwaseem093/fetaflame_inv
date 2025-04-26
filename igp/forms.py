@@ -9,7 +9,6 @@ class IGPForm(forms.ModelForm):
     class Meta:
         model = IGP 
         fields = [
-            'igp_number',
             'messer',
             'date',
             'vehicle_number',
@@ -19,6 +18,7 @@ class IGPForm(forms.ModelForm):
             'category',
             'address',
             ]
+        exclude = ['igp_number', 'created_at', 'created_by', 'updated_at']
 class IGPItemForm(forms.ModelForm):
     class Meta:
         model = IGPItem 

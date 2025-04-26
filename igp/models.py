@@ -7,11 +7,12 @@ from django.utils import timezone
 from categories.models import Category
 from accounts.models import User
 from django.utils.timezone import now
+from django.db.models import Max
 
 
 
 class IGP(models.Model): 
-    igp_number = models.CharField(max_length=20, unique=True)
+    igp_number = models.CharField(max_length=20, unique=True, blank=True, null=True)
     messer = models.ForeignKey(Supplier,on_delete=models.CASCADE)
     date = models.DateField(default=timezone.now)
     vehicle_number = models.CharField(max_length=20, blank=True, null=True)
@@ -25,7 +26,11 @@ class IGP(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     
     def save(self, *args, **kwargs):
-        self.updated_at=now()
+        if not self.igp_number: 
+            last_igp = IGP.objects.aggregate(max_num=Max('id'))['max_num'] or 0
+            next_id = last_igp + 1
+            self.igp_number = f"IGP-{next_id:05d}"
+        self.updated_at = now()
         super().save(*args, **kwargs)
     
     def __str__(self):
@@ -60,6 +65,9 @@ class IGPItem(models.Model):
         if quantity <= 0:
             raise forms.ValidationError("Quantity must be greater than 0")
         return quantity
+    
+  
+    
     
     
     def __str__(self):

@@ -62,11 +62,7 @@ def igp_item_list(request, igp_number):
     # Render the template with the context data
     return render(request, 'items_list.html', context)
 
-# @login_required
-# @role_required('staff','hr','admin')
-# def igp_items_list(request):
-#     igpitem = IGPItem.objects.all()
-#     return render(request, 'items_list.html', {"igpitem":igpitem})
+
 
 
 @login_required
@@ -81,7 +77,10 @@ def create_igp(request):
             igp.created_by=request.user
             igp.save()    
             igp_number = igp.igp_number
-            return redirect(reverse("create_igp_items")+f"?igp_number={igp_number}")
+            if igp_number:
+                return redirect(reverse("create_igp_items")+f"?igp_number={igp_number}")
+            else:
+                messages.error(request, 'Failed to generate IGP Number')
         else:
             messages.error(request, "Validation Error ")
     else:
