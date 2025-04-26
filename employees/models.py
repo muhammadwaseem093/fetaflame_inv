@@ -6,7 +6,7 @@ from datetime import date
 
 class Employee(models.Model):
     photo = models.ImageField(upload_to='', blank=True, null=True)
-    stauts = models.CharField(max_length=20, choices=[('active', 'Active'), ('on_leave', 'On Leave'),('retired','Retired'),('terminated','Terminated')], default='Active')
+    status = models.CharField(max_length=20, choices=[('active', 'Active'), ('on_leave', 'On Leave'),('retired','Retired'),('terminated','Terminated')], default='Active')
     name = models.CharField(max_length=255,null=True, blank=True)
     father_name = models.CharField(max_length=255, blank=True, null=True)
     cnic = models.CharField(max_length=15, blank=True, null=True)
