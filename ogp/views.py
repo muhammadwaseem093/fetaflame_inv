@@ -140,7 +140,10 @@ def update_ogp(request, pk):
         if form.is_valid():
             ogp = form.save()
             ogp_number = ogp.ogp_number
-            return redirect(reverse('update_ogp_items', kwargs={'ogp_number':ogp_number}))
+            if ogp_number:
+                return redirect(reverse('update_ogp_items', kwargs={'ogp_number':ogp_number}))
+            else:
+                messages.error(request, 'Failed to generate OGP Number')
     else:
         form = OGPForm(instance=ogp)
     return render(request, 'update_ogp.html', {'form':form, 'vendors':vendors, 'categories':categories, 'ogp':ogp})

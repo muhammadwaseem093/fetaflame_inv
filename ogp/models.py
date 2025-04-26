@@ -6,6 +6,7 @@ from categories.models import Category
 from django.utils import timezone 
 from accounts.models import User
 from django.utils.timezone import now
+from django.db.models import Max
 
 
 class OGP(models.Model):
@@ -23,7 +24,11 @@ class OGP(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     
     def save(self, *args, **kwargs):
-        self.updated_at=now()
+        if not self.ogp_number: 
+            last_ogp = OGP.objects.aggregate(max_num=Max('id'))['max_num'] or 0
+            next_id = last_ogp + 1
+            self.ogp_number = f"OGP-{next_id:05d}"
+        self.updated_at = now()
         super().save(*args, **kwargs)
     
     def __str__(self):

@@ -9,7 +9,6 @@ class OGPForm(forms.ModelForm):
     class Meta:
         model = OGP
         fields = [
-            'ogp_number',
             'messer',
             'date',
             'vehicle_number',
@@ -19,6 +18,8 @@ class OGPForm(forms.ModelForm):
             'category',
             'address'
         ]
+        
+        exclude = ['ogp_number']
         
 class OGPItemForm(forms.ModelForm):
     class Meta:
